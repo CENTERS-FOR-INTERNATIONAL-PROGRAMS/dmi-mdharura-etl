@@ -35,19 +35,25 @@ $ uv self update
 ```
 
 Then create a virtualenv in the root directory of the project by running
+
 `$ uv venv`
 
 Then activate the environment by running
+
 `$ source .venv/bin/activate`
 
 Install the project dependecies by running
+
 `$ cd etl && uv pip install -e ".[dev]"`
 
 
 Install dbt project dependencies by running
+
 `$ cd mdharura_dbt && dbt deps`
 
 Add .env file with the following
 ``
+
 Test if dbt can connect to the database by running
+
 `$ source .env && cd etl/mdharura_etl/dbt && dbt debug`
