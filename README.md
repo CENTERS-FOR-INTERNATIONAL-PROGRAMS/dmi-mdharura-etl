@@ -1,22 +1,19 @@
 ## Installation
 
-If you wish to install a Python library that isn't in Homebrew,
-use a virtual environment:
-
-python3 -m venv path/to/venv
-source venv/bin/activate
-python3 -m pip install dlt
-
 Install setup tools
+
 `pip install -U pip setuptools`
 
 Install dlt via pip
+
 `pip install dlt dagster dagster-webserver`
 
 Install dagster via pip
+
 `pip install dagster dagster-webserver`
 
 Install mongo_postgres dependencies
+
 `pip install -r mongo_postgres/requirements.txt`
 
 Install [uv](https://github.com/astral-sh/uv) - a package manager for python
