@@ -1,0 +1,1616 @@
+version: 6
+version_hash: R9LLAf1tzCfu+X9TCmMZhDLDv2QQo+pVJLePLhyxWkc=
+engine_version: 10
+name: mongodb
+tables:
+  _dlt_version:
+    columns:
+      version:
+        data_type: bigint
+        nullable: false
+      engine_version:
+        data_type: bigint
+        nullable: false
+      inserted_at:
+        data_type: timestamp
+        nullable: false
+      schema_name:
+        data_type: text
+        nullable: false
+      version_hash:
+        data_type: text
+        nullable: false
+      schema:
+        data_type: text
+        nullable: false
+    write_disposition: skip
+    resource: _dlt_version
+    description: Created by DLT. Tracks schema updates
+  _dlt_loads:
+    columns:
+      load_id:
+        data_type: text
+        nullable: false
+      schema_name:
+        data_type: text
+        nullable: true
+      status:
+        data_type: bigint
+        nullable: false
+      inserted_at:
+        data_type: timestamp
+        nullable: false
+      schema_version_hash:
+        data_type: text
+        nullable: true
+    write_disposition: skip
+    resource: _dlt_loads
+    description: Created by DLT. Tracks completed loads
+  units:
+    columns:
+      _id:
+        nullable: false
+        primary_key: true
+        data_type: text
+      _status:
+        data_type: text
+        nullable: true
+      name:
+        data_type: text
+        nullable: true
+      type:
+        data_type: text
+        nullable: true
+      code:
+        data_type: text
+        nullable: true
+      uid:
+        data_type: text
+        nullable: true
+      parent:
+        data_type: text
+        nullable: true
+      created_at:
+        data_type: timestamp
+        nullable: true
+      updated_at:
+        data_type: timestamp
+        nullable: true
+      v:
+        data_type: bigint
+        nullable: true
+      state:
+        data_type: text
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+      date_last_reported___id:
+        data_type: text
+        nullable: true
+      date_last_reported__live:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__test:
+        data_type: timestamp
+        nullable: true
+    x-merge-strategy: upsert
+    write_disposition: merge
+    resource: units
+    x-normalizer:
+      seen-data: true
+  _dlt_pipeline_state:
+    columns:
+      version:
+        data_type: bigint
+        nullable: false
+      engine_version:
+        data_type: bigint
+        nullable: false
+      pipeline_name:
+        data_type: text
+        nullable: false
+      state:
+        data_type: text
+        nullable: false
+      created_at:
+        data_type: timestamp
+        nullable: false
+      version_hash:
+        data_type: text
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    write_disposition: append
+    file_format: preferred
+    resource: _dlt_pipeline_state
+    x-normalizer:
+      seen-data: true
+  units__suggestions:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: units
+    x-normalizer:
+      seen-data: true
+  units__units:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: units
+    x-normalizer:
+      seen-data: true
+  roles:
+    columns:
+      _id:
+        nullable: false
+        primary_key: true
+        data_type: text
+      status:
+        data_type: text
+        nullable: true
+      _status:
+        data_type: text
+        nullable: true
+      user:
+        data_type: text
+        nullable: true
+      spot:
+        data_type: text
+        nullable: true
+      unit:
+        data_type: text
+        nullable: true
+      created_at:
+        data_type: timestamp
+        nullable: true
+      updated_at:
+        data_type: timestamp
+        nullable: true
+      v:
+        data_type: bigint
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+      date_last_reported___id:
+        data_type: text
+        nullable: true
+      date_last_reported__test:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__live:
+        data_type: timestamp
+        nullable: true
+      date_last_verified___id:
+        data_type: text
+        nullable: true
+      date_last_verified__test:
+        data_type: timestamp
+        nullable: true
+      date_last_verified__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_verified__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_verified__live:
+        data_type: timestamp
+        nullable: true
+    x-merge-strategy: upsert
+    write_disposition: merge
+    resource: roles
+    x-normalizer:
+      seen-data: true
+  roles__units:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: roles
+    x-normalizer:
+      seen-data: true
+  tasks:
+    columns:
+      _id:
+        nullable: false
+        primary_key: true
+        data_type: text
+      _status:
+        data_type: text
+        nullable: true
+      unit:
+        data_type: text
+        nullable: true
+      user:
+        data_type: text
+        nullable: true
+      signal:
+        data_type: text
+        nullable: true
+      signal_id:
+        data_type: text
+        nullable: true
+      created_at:
+        data_type: timestamp
+        nullable: true
+      updated_at:
+        data_type: timestamp
+        nullable: true
+      v:
+        data_type: bigint
+        nullable: true
+      lebs___id:
+        data_type: text
+        nullable: true
+      lebs__verification_form__via:
+        data_type: text
+        nullable: true
+      lebs__verification_form___id:
+        data_type: text
+        nullable: true
+      lebs__verification_form__user:
+        data_type: text
+        nullable: true
+      lebs__verification_form__description:
+        data_type: text
+        nullable: true
+      lebs__verification_form__is_matching_signal:
+        data_type: text
+        nullable: true
+      lebs__verification_form__updated_signal:
+        data_type: text
+        nullable: true
+      lebs__verification_form__date_health_threat_started:
+        data_type: timestamp
+        nullable: true
+      lebs__verification_form__informant:
+        data_type: text
+        nullable: true
+      lebs__verification_form__additional_information:
+        data_type: text
+        nullable: true
+      lebs__verification_form__is_still_happening:
+        data_type: text
+        nullable: true
+      lebs__verification_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      lebs__verification_form__created_at:
+        data_type: timestamp
+        nullable: true
+      lebs__created_at:
+        data_type: timestamp
+        nullable: true
+      lebs__updated_at:
+        data_type: timestamp
+        nullable: true
+      status:
+        data_type: text
+        nullable: true
+      state:
+        data_type: text
+        nullable: true
+      via:
+        data_type: text
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+      cebs___id:
+        data_type: text
+        nullable: true
+      cebs__response_form__via:
+        data_type: text
+        nullable: true
+      cebs__response_form___id:
+        data_type: text
+        nullable: true
+      cebs__response_form__user:
+        data_type: text
+        nullable: true
+      cebs__response_form__event_type:
+        data_type: text
+        nullable: true
+      cebs__response_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      cebs__response_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      cebs__response_form__outcome_of_response:
+        data_type: text
+        nullable: true
+      cebs__response_form__date_of_report:
+        data_type: timestamp
+        nullable: true
+      cebs__response_form__additional_information:
+        data_type: text
+        nullable: true
+      cebs__response_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      cebs__response_form__created_at:
+        data_type: timestamp
+        nullable: true
+      cebs__created_at:
+        data_type: timestamp
+        nullable: true
+      cebs__updated_at:
+        data_type: timestamp
+        nullable: true
+      cebs__verification_form__via:
+        data_type: text
+        nullable: true
+      cebs__verification_form___id:
+        data_type: text
+        nullable: true
+      cebs__verification_form__user:
+        data_type: text
+        nullable: true
+      cebs__verification_form__source:
+        data_type: text
+        nullable: true
+      cebs__verification_form__description:
+        data_type: text
+        nullable: true
+      cebs__verification_form__is_matching_signal:
+        data_type: text
+        nullable: true
+      cebs__verification_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      cebs__verification_form__created_at:
+        data_type: timestamp
+        nullable: true
+      cebs__verification_form__updated_signal:
+        data_type: text
+        nullable: true
+      cebs__verification_form__is_reported_before:
+        data_type: text
+        nullable: true
+      cebs__verification_form__date_health_threat_started:
+        data_type: timestamp
+        nullable: true
+      cebs__verification_form__informant:
+        data_type: text
+        nullable: true
+      cebs__verification_form__is_threat_still_existing:
+        data_type: text
+        nullable: true
+      cebs__verification_form__additional_information:
+        data_type: text
+        nullable: true
+      cebs__verification_form__threat_to:
+        data_type: text
+        nullable: true
+      cebs__verification_form__date_verified:
+        data_type: timestamp
+        nullable: true
+      cebs__verification_form__date_scdsc_informed:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__via:
+        data_type: text
+        nullable: true
+      cebs__investigation_form___id:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__user:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__date_scdsc_informed:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__date_investigation_started:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__date_event_started:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__symptoms:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__humans_cases:
+        data_type: bigint
+        nullable: true
+      cebs__investigation_form__humans_cases_hospitalized:
+        data_type: bigint
+        nullable: true
+      cebs__investigation_form__humans_dead:
+        data_type: bigint
+        nullable: true
+      cebs__investigation_form__animals_cases:
+        data_type: bigint
+        nullable: true
+      cebs__investigation_form__animals_dead:
+        data_type: bigint
+        nullable: true
+      cebs__investigation_form__is_cause_known:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__cause:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__is_lab_samples_collected:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__date_sample_collected:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__lab_results:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__date_lab_results_received:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__is_ybjriad_reported_from_initial_area:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__is_new_cased_reported_from_new_areas:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__is_event_setting_promoting_spread:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__additional_information:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__risk_classification:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      cebs__investigation_form__created_at:
+        data_type: timestamp
+        nullable: true
+      cebs__escalation_form__via:
+        data_type: text
+        nullable: true
+      cebs__escalation_form___id:
+        data_type: text
+        nullable: true
+      cebs__escalation_form__user:
+        data_type: text
+        nullable: true
+      cebs__escalation_form__event_type:
+        data_type: text
+        nullable: true
+      cebs__escalation_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      cebs__escalation_form__reason:
+        data_type: text
+        nullable: true
+      cebs__escalation_form__date_escalated:
+        data_type: timestamp
+        nullable: true
+      cebs__escalation_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      cebs__escalation_form__created_at:
+        data_type: timestamp
+        nullable: true
+      cebs__response_form__date_escalated:
+        data_type: timestamp
+        nullable: true
+      cebs__escalation_form__reason_other:
+        data_type: text
+        nullable: true
+      version:
+        data_type: text
+        nullable: true
+      cebs__response_form__other_response_activity:
+        data_type: text
+        nullable: true
+      spot:
+        data_type: text
+        nullable: true
+      cebs__verification_form__other_informant:
+        data_type: text
+        nullable: true
+      hebs__verification_form__via:
+        data_type: text
+        nullable: true
+      hebs__verification_form___id:
+        data_type: text
+        nullable: true
+      hebs__verification_form__user:
+        data_type: text
+        nullable: true
+      hebs__verification_form__source:
+        data_type: text
+        nullable: true
+      hebs__verification_form__description:
+        data_type: text
+        nullable: true
+      hebs__verification_form__is_matching_signal:
+        data_type: text
+        nullable: true
+      hebs__verification_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      hebs__verification_form__created_at:
+        data_type: timestamp
+        nullable: true
+      hebs__created_at:
+        data_type: timestamp
+        nullable: true
+      hebs__updated_at:
+        data_type: timestamp
+        nullable: true
+      hebs___id:
+        data_type: text
+        nullable: true
+      hebs__verification_form__updated_signal:
+        data_type: text
+        nullable: true
+      hebs__verification_form__is_reported_before:
+        data_type: text
+        nullable: true
+      hebs__verification_form__date_health_threat_started:
+        data_type: timestamp
+        nullable: true
+      hebs__verification_form__informant:
+        data_type: text
+        nullable: true
+      hebs__verification_form__is_threat_still_existing:
+        data_type: text
+        nullable: true
+      hebs__verification_form__additional_information:
+        data_type: text
+        nullable: true
+      hebs__verification_form__threat_to:
+        data_type: text
+        nullable: true
+      hebs__verification_form__date_verified:
+        data_type: timestamp
+        nullable: true
+      hebs__verification_form__date_scdsc_informed:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__via:
+        data_type: text
+        nullable: true
+      hebs__investigation_form___id:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__user:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__date_scdsc_informed:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__date_investigation_started:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__date_event_started:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__symptoms:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__humans_cases:
+        data_type: bigint
+        nullable: true
+      hebs__investigation_form__humans_cases_hospitalized:
+        data_type: bigint
+        nullable: true
+      hebs__investigation_form__humans_dead:
+        data_type: bigint
+        nullable: true
+      hebs__investigation_form__animals_cases:
+        data_type: bigint
+        nullable: true
+      hebs__investigation_form__animals_dead:
+        data_type: bigint
+        nullable: true
+      hebs__investigation_form__is_cause_known:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__is_lab_samples_collected:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__date_sample_collected:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__lab_results:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__date_lab_results_received:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__is_ss80mqd_reported_from_initial_area:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__is_new_cased_reported_from_new_areas:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__is_event_setting_promoting_spread:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__additional_information:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__risk_classification:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__created_at:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__via:
+        data_type: text
+        nullable: true
+      hebs__response_form___id:
+        data_type: text
+        nullable: true
+      hebs__response_form__user:
+        data_type: text
+        nullable: true
+      hebs__response_form__event_type:
+        data_type: text
+        nullable: true
+      hebs__response_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__outcome_of_response:
+        data_type: text
+        nullable: true
+      hebs__response_form__date_escalated:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__date_of_report:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__additional_information:
+        data_type: text
+        nullable: true
+      hebs__response_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__created_at:
+        data_type: timestamp
+        nullable: true
+      hebs__escalation_form__via:
+        data_type: text
+        nullable: true
+      hebs__escalation_form___id:
+        data_type: text
+        nullable: true
+      hebs__escalation_form__user:
+        data_type: text
+        nullable: true
+      hebs__escalation_form__event_type:
+        data_type: text
+        nullable: true
+      hebs__escalation_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      hebs__escalation_form__reason:
+        data_type: text
+        nullable: true
+      hebs__escalation_form__date_escalated:
+        data_type: timestamp
+        nullable: true
+      hebs__escalation_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      hebs__escalation_form__created_at:
+        data_type: timestamp
+        nullable: true
+      hebs__investigation_form__cause:
+        data_type: text
+        nullable: true
+      vebs___id:
+        data_type: text
+        nullable: true
+      vebs__verification_form__via:
+        data_type: text
+        nullable: true
+      vebs__verification_form___id:
+        data_type: text
+        nullable: true
+      vebs__verification_form__user:
+        data_type: text
+        nullable: true
+      vebs__verification_form__source:
+        data_type: text
+        nullable: true
+      vebs__verification_form__description:
+        data_type: text
+        nullable: true
+      vebs__verification_form__is_matching_signal:
+        data_type: text
+        nullable: true
+      vebs__verification_form__updated_signal:
+        data_type: text
+        nullable: true
+      vebs__verification_form__is_reported_before:
+        data_type: text
+        nullable: true
+      vebs__verification_form__date_health_threat_started:
+        data_type: timestamp
+        nullable: true
+      vebs__verification_form__informant:
+        data_type: text
+        nullable: true
+      vebs__verification_form__is_threat_still_existing:
+        data_type: text
+        nullable: true
+      vebs__verification_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      vebs__verification_form__created_at:
+        data_type: timestamp
+        nullable: true
+      vebs__created_at:
+        data_type: timestamp
+        nullable: true
+      vebs__updated_at:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__via:
+        data_type: text
+        nullable: true
+      vebs__investigation_form___id:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__user:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__date_scdsc_informed:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__date_investigation_started:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__date_event_started:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__symptoms:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__humans_cases:
+        data_type: bigint
+        nullable: true
+      vebs__investigation_form__humans_cases_hospitalized:
+        data_type: bigint
+        nullable: true
+      vebs__investigation_form__humans_dead:
+        data_type: bigint
+        nullable: true
+      vebs__investigation_form__animals_cases:
+        data_type: bigint
+        nullable: true
+      vebs__investigation_form__animals_dead:
+        data_type: bigint
+        nullable: true
+      vebs__investigation_form__is_cause_known:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__is_lab_samples_collected:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__is_27a34wd_reported_from_initial_area:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__is_new_cased_reported_from_new_areas:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__is_event_setting_promoting_spread:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__additional_information:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__risk_classification:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__created_at:
+        data_type: timestamp
+        nullable: true
+      vebs__response_form__via:
+        data_type: text
+        nullable: true
+      vebs__response_form___id:
+        data_type: text
+        nullable: true
+      vebs__response_form__user:
+        data_type: text
+        nullable: true
+      vebs__response_form__event_type:
+        data_type: text
+        nullable: true
+      vebs__response_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      vebs__response_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      vebs__response_form__outcome_of_response:
+        data_type: text
+        nullable: true
+      vebs__response_form__date_escalated:
+        data_type: timestamp
+        nullable: true
+      vebs__response_form__date_of_report:
+        data_type: timestamp
+        nullable: true
+      vebs__response_form__additional_information:
+        data_type: text
+        nullable: true
+      vebs__response_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      vebs__response_form__created_at:
+        data_type: timestamp
+        nullable: true
+      vebs__escalation_form__via:
+        data_type: text
+        nullable: true
+      vebs__escalation_form___id:
+        data_type: text
+        nullable: true
+      vebs__escalation_form__user:
+        data_type: text
+        nullable: true
+      vebs__escalation_form__event_type:
+        data_type: text
+        nullable: true
+      vebs__escalation_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      vebs__escalation_form__reason:
+        data_type: text
+        nullable: true
+      vebs__escalation_form__date_escalated:
+        data_type: timestamp
+        nullable: true
+      vebs__escalation_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      vebs__escalation_form__created_at:
+        data_type: timestamp
+        nullable: true
+      vebs__verification_form__additional_information:
+        data_type: text
+        nullable: true
+      vebs__verification_form__threat_to:
+        data_type: text
+        nullable: true
+      vebs__verification_form__date_verified:
+        data_type: timestamp
+        nullable: true
+      vebs__verification_form__date_scdsc_informed:
+        data_type: timestamp
+        nullable: true
+      pmebs___id:
+        data_type: text
+        nullable: true
+      pmebs__report_form__via:
+        data_type: text
+        nullable: true
+      pmebs__report_form___id:
+        data_type: text
+        nullable: true
+      pmebs__report_form__user:
+        data_type: text
+        nullable: true
+      pmebs__report_form__date_detected:
+        data_type: timestamp
+        nullable: true
+      pmebs__report_form__description:
+        data_type: text
+        nullable: true
+      pmebs__report_form__source:
+        data_type: text
+        nullable: true
+      pmebs__report_form__unit:
+        data_type: text
+        nullable: true
+      pmebs__report_form__locality:
+        data_type: text
+        nullable: true
+      pmebs__report_form__date_reported:
+        data_type: timestamp
+        nullable: true
+      pmebs__report_form__created_at:
+        data_type: timestamp
+        nullable: true
+      pmebs__report_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      pmebs__created_at:
+        data_type: timestamp
+        nullable: true
+      pmebs__updated_at:
+        data_type: timestamp
+        nullable: true
+      pmebs__request_form__via:
+        data_type: text
+        nullable: true
+      pmebs__request_form___id:
+        data_type: text
+        nullable: true
+      pmebs__request_form__user:
+        data_type: text
+        nullable: true
+      pmebs__request_form__unit:
+        data_type: text
+        nullable: true
+      pmebs__request_form__date_reported:
+        data_type: timestamp
+        nullable: true
+      pmebs__request_form__date_requested:
+        data_type: timestamp
+        nullable: true
+      pmebs__request_form__description:
+        data_type: text
+        nullable: true
+      pmebs__request_form__locality:
+        data_type: text
+        nullable: true
+      pmebs__request_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      pmebs__request_form__created_at:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__date_sample_collected:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__lab_results:
+        data_type: text
+        nullable: true
+      vebs__investigation_form__date_lab_results_received:
+        data_type: timestamp
+        nullable: true
+      vebs__investigation_form__cause:
+        data_type: text
+        nullable: true
+      hebs__investigation_form__is_event_infectious:
+        data_type: text
+        nullable: true
+      lebs__response_form__via:
+        data_type: text
+        nullable: true
+      lebs__response_form___id:
+        data_type: text
+        nullable: true
+      lebs__response_form__user:
+        data_type: text
+        nullable: true
+      lebs__response_form__date_scmoh_informed:
+        data_type: timestamp
+        nullable: true
+      lebs__response_form__date_response_started:
+        data_type: timestamp
+        nullable: true
+      lebs__response_form__humans_cases:
+        data_type: bigint
+        nullable: true
+      lebs__response_form__humans_dead:
+        data_type: bigint
+        nullable: true
+      lebs__response_form__additional_information:
+        data_type: text
+        nullable: true
+      lebs__response_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      lebs__response_form__created_at:
+        data_type: timestamp
+        nullable: true
+      lebs__verification_form__date_verified:
+        data_type: timestamp
+        nullable: true
+      hebs__response_form__other_response_activity:
+        data_type: text
+        nullable: true
+      cebs__summary_form__via:
+        data_type: text
+        nullable: true
+      cebs__summary_form___id:
+        data_type: text
+        nullable: true
+      cebs__summary_form__user:
+        data_type: text
+        nullable: true
+      cebs__summary_form__event_status:
+        data_type: text
+        nullable: true
+      cebs__summary_form__cause:
+        data_type: text
+        nullable: true
+      cebs__summary_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      cebs__summary_form__created_at:
+        data_type: timestamp
+        nullable: true
+      hebs__escalation_form__reason_other:
+        data_type: text
+        nullable: true
+      cebs__investigation_form__is_event_infectious:
+        data_type: text
+        nullable: true
+      hebs__summary_form__via:
+        data_type: text
+        nullable: true
+      hebs__summary_form___id:
+        data_type: text
+        nullable: true
+      hebs__summary_form__user:
+        data_type: text
+        nullable: true
+      hebs__summary_form__event_status:
+        data_type: text
+        nullable: true
+      hebs__summary_form__cause:
+        data_type: text
+        nullable: true
+      hebs__summary_form__updated_at:
+        data_type: timestamp
+        nullable: true
+      hebs__summary_form__created_at:
+        data_type: timestamp
+        nullable: true
+      cebs__summary_form__escalated_to:
+        data_type: text
+        nullable: true
+      hebs__summary_form__escalated_to:
+        data_type: text
+        nullable: true
+    x-merge-strategy: upsert
+    write_disposition: merge
+    resource: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__units:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__cebs__response_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__cebs__response_form__recommendations:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__cebs__investigation_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__suggestions:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__investigation_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__response_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__response_form__recommendations:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__vebs__investigation_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__vebs__response_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__vebs__response_form__recommendations:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__investigation_form__event_categories:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__investigation_form__systems_affected_by_event:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__lebs__response_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__lebs__response_form__event_statuses:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__cebs__investigation_form__event_categories:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__cebs__investigation_form__systems_affected_by_event:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_root_id:
+        data_type: text
+        nullable: false
+        root_key: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+settings:
+  detections:
+  - iso_timestamp
+  default_hints:
+    not_null:
+    - _dlt_id
+    - _dlt_root_id
+    - _dlt_parent_id
+    - _dlt_list_idx
+    - _dlt_load_id
+    parent_key:
+    - _dlt_parent_id
+    root_key:
+    - _dlt_root_id
+    unique:
+    - _dlt_id
+    row_key:
+    - _dlt_id
+normalizers:
+  names: snake_case
+  json:
+    module: dlt.common.normalizers.json.relational
+    config:
+      propagation:
+        tables:
+          units:
+            _dlt_id: _dlt_root_id
+          roles:
+            _dlt_id: _dlt_root_id
+          tasks:
+            _dlt_id: _dlt_root_id
+previous_hashes:
+- IbrglRf7HMe8VzslzT499GEF3qSi81C2ZllhVkpWk6g=
+- SWChljNwc3q4Z99kltlaCotM0g2JB2UV98WjgXIuH7Y=
+- uXkXIWTWPJTlvpF+O0qdPKE6gM0+3t2xuWUII10/JhU=
+- 9GZTEduv2sdmRPdyJnUHAVOvmH9W2/wT+FEIjbC6NHQ=
+- FV9ytcCh4WWa9MrAcsCMnH0AmJRntNkXderJTApP/XY=
+- Ez6r+i+LBHkayF2kz0YyjbMjGrRHorqyO6XshGx2hlI=
