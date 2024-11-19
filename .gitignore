@@ -1,7 +1,6 @@
 .env
 .venv
 *.egg-info/
-*.csv
 *.json
 *.db
 tmp*
@@ -19,3 +18,5 @@ logs/
 **/storage
 build/
 README1.md
+example/
+*DS_Store

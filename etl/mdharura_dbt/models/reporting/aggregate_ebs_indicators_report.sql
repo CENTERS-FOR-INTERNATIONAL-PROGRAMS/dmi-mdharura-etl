@@ -1,0 +1,108 @@
+SELECT
+  dim_date.date AS "DATE",
+  county."NAME" AS "COUNTY",
+  county."UID" AS "COUNTY_UID",
+  county."_ID" AS "COUNTY_ID",
+  sub_county."NAME" AS "SUB_COUNTY",
+  sub_county."UID" AS "SUB_COUNTY_UID",
+  sub_county."_ID" AS "SUB_COUNTY_ID",
+  community_unit."NAME" AS "UNIT_NAME",
+  community_unit."UID" AS "UNIT_UID",
+  community_unit."_ID" AS "UNIT_ID",
+  SUM(
+    CASE
+      WHEN "SIGNAL" IN(
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "CEBS_SIGNALS_REPORTED",
+  SUM(
+    CASE
+      WHEN "CEBS_VERIFICATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "CEBS_SIGNALS_VERIFIED",
+  -- SUM( CASE  WHEN  cebs_verificationform_isThreatStillExisting IN ('Yes', 'yes') then 1 else  0 end ) as  verified_true,
+  SUM(
+    CASE
+      WHEN "CEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "CEBS_SIGNALS_RISK_ASSESSED",
+  SUM(
+    CASE
+      WHEN "CEBS_RESPONSEFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "CEBS_SIGNALS_RESPONDED",
+  SUM(
+    CASE
+      WHEN "CEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "CEBS_SIGNALS_ESCALATED" -- HEBS Signals ---
+  -- SUM(
+  --   CASE
+  --     WHEN "SIGNAL" IN(
+  --       'h1',
+  --       'h2',
+  --       'h3'
+  --     ) THEN 1
+  --     ELSE 0
+  --   END
+  -- ) AS "HEBS_SIGNALS_REPORTED",
+  -- SUM(
+  --   CASE
+  --     WHEN "HEBS_VERIFICATIONFORM_ID" IS NOT NULL THEN 1
+  --     ELSE 0
+  --   END
+  -- ) AS "HEBS_SIGNALS_VERIFIED",
+  -- SUM(
+  --   CASE
+  --     WHEN "HEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
+  --     ELSE 0
+  --   END
+  -- ) AS "HEBS_SIGNALS_RISK_ASSESSED",
+  -- SUM(
+  --   CASE
+  --     WHEN "HEBS_RESPONSEFORM_ID" IS NOT NULL THEN 1
+  --     ELSE 0
+  --   END
+  -- ) AS "HEBS_SIGNALS_RESPONDED",
+  -- SUM(
+  --   CASE
+  --     WHEN "HEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
+  --     ELSE 0
+  --   END
+  -- ) AS "HEBS_SIGNALS_ESCALATED"
+FROM
+  {{ ref('fct_tasks') }} AS tasks
+  LEFT JOIN {{ ref('dim_date') }} AS dim_date
+  ON dim_date.date_key = tasks."DATE_KEY"
+  LEFT JOIN {{ ref('fct_county_units') }} AS county
+  ON county."COUNTY_KEY" = tasks."COUNTY_KEY"
+  LEFT JOIN {{ ref('fct_sub_county_units') }} AS sub_county
+  ON sub_county."SUB_COUNTY_KEY" = tasks."SUB_COUNTY_KEY"
+  LEFT JOIN {{ ref('fct_community_units') }} AS community_unit
+  ON community_unit."COMMUNITY_UNIT_KEY" = tasks."COMMUNITY_UNIT_KEY"
+  AND community_unit."_ID" = tasks."UNIT_ID"
+WHERE
+  tasks."STATE" = 'live'
+GROUP BY
+  dim_date.date,
+  county."NAME",
+  county."UID",
+  county."_ID",
+  sub_county."NAME",
+  sub_county."UID",
+  sub_county."_ID",
+  community_unit."NAME",
+  community_unit."UID",
+  community_unit."_ID"

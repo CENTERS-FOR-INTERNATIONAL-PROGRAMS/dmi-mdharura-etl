@@ -10,10 +10,13 @@ sources:
         description: This table contains raw data for user roles on M-dharura app
       - name: units
         description: This table contains raw data for community, health facility, subcounty, county units on M-dharura app
-  # - name: staging
-  #   database: mdharura
-  #   schema: staging
-  #   tables:
-  #     - name: stg_ebridge_output
-  #       description: This table contains raw data from the e-bridge ML model
-  #     - name: stg_ebridge_output_actual_predicted
+  - name: staging
+    database: mdharura
+    schema: mdharura_dbt_staging
+    tables:
+      - name: stg_roles
+        description: This table normalized data for user roles on M-dharura app
+      - name: stg_units
+        description: This table normalized data for community, health facility, subcounty, county units on M-dharura app
+      - name: stg_tasks
+        description: This table normalized data for signals reported via M-dharura app

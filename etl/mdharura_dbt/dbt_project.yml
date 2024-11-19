@@ -37,6 +37,16 @@ models:
     staging:
       +materialized: table
       +schema: staging
+    data_mart:
+      +materialized: table
+      +schema: data_mart
+    reporting:
+      +materialized: table
+      +schema: reporting
+
+seeds:
+  mdharura_dbt:
+    +schema: staging
 
 dispatch:
   - macro_namespace: dbt_utils
