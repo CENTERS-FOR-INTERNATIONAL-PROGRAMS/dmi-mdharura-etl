@@ -6,11 +6,11 @@ setup(
     packages=find_packages(),
     install_requires=[
         "dagster",
-        "dagster-cloud",
         "dlt",
         "dagster",
         "dagster-webserver",
         "pymongo",
+        "pymongoarrow",
         "dagster-dbt",
         "dbt-core",
         "dbt-postgres",

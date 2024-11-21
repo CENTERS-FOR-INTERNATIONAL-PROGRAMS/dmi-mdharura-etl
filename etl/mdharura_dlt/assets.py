@@ -3,6 +3,9 @@ from . import mongodb
 from .resources import MdharuraDltResource
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 URL = os.getenv('SOURCES__MONGODB__CONNECTION__URL')
 
 DATABASE_COLLECTIONS = {

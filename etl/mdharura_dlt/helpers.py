@@ -429,7 +429,7 @@ def convert_arrow_columns(table: Any) -> Any:
 
 def client_from_credentials(connection_url: str) -> TMongoClient:
     client: TMongoClient = MongoClient(
-        connection_url, uuidRepresentation="standard", tz_aware=True
+        connection_url, uuidRepresentation="standard", tz_aware=True, directConnection=True
     )
     return client
 

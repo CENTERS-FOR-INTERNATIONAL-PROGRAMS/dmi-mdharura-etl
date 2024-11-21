@@ -9,7 +9,7 @@ from dlt.pipeline.pipeline import Pipeline
 try:
     from .mongodb import mongodb, mongodb_collection  # type: ignore
 except ImportError:
-    from etl.mongo_postgres import mongodb, mongodb_collection
+    from etl.mdharura_dlt import mongodb, mongodb_collection
 
 
 def load_select_collection_db(pipeline: Pipeline = None) -> LoadInfo:

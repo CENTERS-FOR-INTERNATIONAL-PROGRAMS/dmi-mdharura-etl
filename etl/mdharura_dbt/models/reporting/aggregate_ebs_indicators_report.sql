@@ -47,41 +47,42 @@ SELECT
       WHEN "CEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
       ELSE 0
     END
-  ) AS "CEBS_SIGNALS_ESCALATED" -- HEBS Signals ---
-  -- SUM(
-  --   CASE
-  --     WHEN "SIGNAL" IN(
-  --       'h1',
-  --       'h2',
-  --       'h3'
-  --     ) THEN 1
-  --     ELSE 0
-  --   END
-  -- ) AS "HEBS_SIGNALS_REPORTED",
-  -- SUM(
-  --   CASE
-  --     WHEN "HEBS_VERIFICATIONFORM_ID" IS NOT NULL THEN 1
-  --     ELSE 0
-  --   END
-  -- ) AS "HEBS_SIGNALS_VERIFIED",
-  -- SUM(
-  --   CASE
-  --     WHEN "HEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
-  --     ELSE 0
-  --   END
-  -- ) AS "HEBS_SIGNALS_RISK_ASSESSED",
-  -- SUM(
-  --   CASE
-  --     WHEN "HEBS_RESPONSEFORM_ID" IS NOT NULL THEN 1
-  --     ELSE 0
-  --   END
-  -- ) AS "HEBS_SIGNALS_RESPONDED",
-  -- SUM(
-  --   CASE
-  --     WHEN "HEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
-  --     ELSE 0
-  --   END
-  -- ) AS "HEBS_SIGNALS_ESCALATED"
+  ) AS "CEBS_SIGNALS_ESCALATED",
+  -- HEBS Signals ---
+  SUM(
+    CASE
+      WHEN "SIGNAL" IN(
+        'h1',
+        'h2',
+        'h3'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "HEBS_SIGNALS_REPORTED",
+  SUM(
+    CASE
+      WHEN "HEBS_VERIFICATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "HEBS_SIGNALS_VERIFIED",
+  SUM(
+    CASE
+      WHEN "HEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "HEBS_SIGNALS_RISK_ASSESSED",
+  SUM(
+    CASE
+      WHEN "HEBS_RESPONSEFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "HEBS_SIGNALS_RESPONDED",
+  SUM(
+    CASE
+      WHEN "HEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "HEBS_SIGNALS_ESCALATED"
 FROM
   {{ ref('fct_tasks') }} AS tasks
   LEFT JOIN {{ ref('dim_date') }} AS dim_date

@@ -1,0 +1,159 @@
+include:
+  - path: supabase/docker-compose.yml
+    env_file:
+      - .env
+
+services:
+  # This service runs the gRPC server that loads your user code, in both dagster-webserver
+  # and dagster-daemon. By setting DAGSTER_CURRENT_IMAGE to its own image, we tell the
+  # run launcher to use this same image when launching runs in a new container as well.
+  # Multiple containers like this can be deployed separately - each just needs to run on
+  # its own port, and have its own entry in the workspace.yaml file that's loaded by the
+  # webserver.
+  mdharura_etl:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.etl
+    container_name: mdharura_etl
+    image: mdharura_etl_image
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
+      DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+      DAGSTER_CURRENT_IMAGE: "mdharura_etl_image"
+      DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
+      DBT_DATABASE_DEV: ${POSTGRES_DB}
+      DBT_SCHEMA: "mdharura_dbt"
+      DBT_PORT_DEV: ${POSTGRES_PORT}
+      DBT_USER_DEV: ${POSTGRES_USER}
+      DBT_PASSWORD_DEV: ${POSTGRES_PASSWORD}
+      SOURCES__MONGODB__CONNECTION__URL: "mongodb://host.docker.internal:27017/"
+      DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
+      DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
+      DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
+      DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_PORT}
+      DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
+    networks:
+      - mdharura_etl_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./etl/mdharura_dlt:/opt/dagster/app/mdharura_dlt
+      - ./etl/mdharura_dbt:/opt/dagster/app/mdharura_dbt
+      - ./etl/definitions.py:/opt/dagster/app/definitions.py
+      - ./etl/assets.py:/opt/dagster/app/assets.py
+      - ./etl/project.py:/opt/dagster/app/project.py
+      - ./etl/dagster.yaml:/opt/dagster/app/dagster.yaml
+      - ./etl/workspace.yaml:/opt/dagster/app/workspace.yaml
+
+  # This service runs dagster-webserver, which loads your user code from the user code container.
+  # Since our instance uses the QueuedRunCoordinator, any runs submitted from the webserver will be put on
+  # a queue and later dequeued and launched by dagster-daemon.
+  mdharura_etl_webserver:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dagster
+    entrypoint:
+      - dagster-webserver
+      - -h
+      - "0.0.0.0"
+      - -p
+      - "3000"
+      - -w
+      - workspace.yaml
+    container_name: mdharura_etl_webserver
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+
+    environment:
+      DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
+      DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+      DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
+      DBT_DATABASE_DEV: ${POSTGRES_DB}
+      DBT_SCHEMA: "mdharura_dbt"
+      DBT_PORT_DEV: ${POSTGRES_PORT}
+      DBT_USER_DEV: ${POSTGRES_USER}
+      DBT_PASSWORD_DEV: ${POSTGRES_PASSWORD}
+      SOURCES__MONGODB__CONNECTION__URL: "mongodb://host.docker.internal:27017/"
+      DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
+      DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
+      DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
+      DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_PORT}
+      DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
+
+    volumes: # Make docker client accessible so we can terminate containers from the webserver
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+    networks:
+      - mdharura_etl_network
+    depends_on:
+      # docker_example_postgresql:
+      #   condition: service_healthy
+      db:
+        condition: service_healthy
+      mdharura_etl:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # This service runs the dagster-daemon process, which is responsible for taking runs
+  # off of the queue and launching them, as well as creating runs from schedules or sensors.
+  mdharura_etl_daemon:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dagster
+    entrypoint:
+      - dagster-daemon
+      - run
+    container_name: mdharura_etl_daemon
+    restart: on-failure
+    environment:
+      DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+      DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
+      DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
+      DBT_DATABASE_DEV: ${POSTGRES_DB}
+      DBT_SCHEMA: "mdharura_dbt"
+      DBT_PORT_DEV: ${POSTGRES_PORT}
+      DBT_USER_DEV: ${POSTGRES_USER}
+      DBT_PASSWORD_DEV: ${POSTGRES_PASSWORD}
+      SOURCES__MONGODB__CONNECTION__URL: "mongodb://host.docker.internal:27017/"
+      DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
+      DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
+      DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
+      DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_PORT}
+      DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
+
+    volumes: # Make docker client accessible so we can launch containers using host docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+    networks:
+      - mdharura_etl_network
+    depends_on:
+      db:
+        condition: service_healthy
+      mdharura_etl:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  mdharura_etl_network:
+    driver: bridge
+    name: mdharura_etl_network

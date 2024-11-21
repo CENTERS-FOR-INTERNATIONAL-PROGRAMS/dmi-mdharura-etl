@@ -1,0 +1,57 @@
+FROM python:3.12-slim
+
+# Checkout and install dagster libraries needed to run the gRPC server
+# exposing your repository to dagster-webserver and dagster-daemon, and to load the DagsterInstance
+
+RUN pip install \
+    dagster \
+    dagster-postgres \
+    dagster-docker \
+    pymongo \
+    dlt \
+    dagster-dbt \
+    dbt-core \
+    dbt-postgres \
+    dlt[postgres]
+
+
+# Add repository code
+
+WORKDIR /opt/dagster/app
+
+# COPY repo.py /opt/dagster/app
+
+# Add dbt code
+COPY etl/mdharura_dbt /opt/dagster/app/mdharura_dbt
+
+# Add dlt code
+COPY etl/mdharura_dlt /opt/dagster/app/mdharura_dlt
+
+# Add dlt schema 
+COPY etl/schema /opt/dagster/app/schema
+
+# Add dbt dagster project file
+COPY etl/project.py /opt/dagster/app
+
+# Add dagster assets  file
+COPY etl/assets.py /opt/dagster/app
+
+# Add dagster definitions file
+COPY etl/definitions.py /opt/dagster/app
+
+# Install dbt dependencies
+WORKDIR /opt/dagster/app/mdharura_dbt
+
+RUN dbt deps
+
+WORKDIR /opt/dagster/app
+
+# Run dagster gRPC server on port 6200
+
+EXPOSE 6200
+
+# CMD allows this to be overridden from run launchers or executors that want
+# to run other commands against your repository
+# CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "6200"]
+
+CMD ["dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "6200", "--python-file", "/opt/dagster/app/definitions.py", "-d",  "/opt/dagster/app"]
