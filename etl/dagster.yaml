@@ -29,8 +29,8 @@ run_launcher:
       - DESTINATION__POSTGRES__CREDENTIALS__HOST
       - DESTINATION__POSTGRES__CREDENTIALS__PORT
       - DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT
-    # network: mdharura_etl_network
-    network: localhost
+    network: mdharura_etl_network
+    # network: localhost
     container_kwargs:
       volumes: # Make docker client accessible to any launched containers as well
         - /var/run/docker.sock:/var/run/docker.sock
