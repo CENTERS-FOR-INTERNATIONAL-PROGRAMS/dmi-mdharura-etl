@@ -1,7 +1,8 @@
 version: 2
 sources:
   - name: central_raw_mdharura
-    database: postgres
+    # database: postgres
+    database: "{{ env_var('DBT_DATABASE_DEV') }}"
     schema: central_raw_mdharura
     tables:
       - name: tasks
@@ -11,7 +12,8 @@ sources:
       - name: units
         description: This table contains raw data for community, health facility, subcounty, county units on M-dharura app
   - name: staging
-    database: postgres
+    # database: postgres
+    database: "{{ env_var('DBT_DATABASE_DEV') }}"
     schema: mdharura_dbt_staging
     tables:
       - name: stg_roles

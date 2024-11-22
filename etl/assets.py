@@ -8,7 +8,7 @@ class DbtConfig(Config):
 DBT_PROJECT_DIR = file_relative_path(__file__, "./mdharura_dbt")
 
 dbt_resource = DbtCliResource(project_dir=DBT_PROJECT_DIR)
-_ = dbt_resource.cli(["deps"]).wait()
+# _ = dbt_resource.cli(["deps"]).wait()
 
 dbt_parse_invocation = dbt_resource.cli(["parse"]).wait()
 dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")

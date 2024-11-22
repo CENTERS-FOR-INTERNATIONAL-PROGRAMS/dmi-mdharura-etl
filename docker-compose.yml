@@ -46,8 +46,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./etl/mdharura_dlt:/opt/dagster/app/mdharura_dlt
-      - ./etl/mdharura_dbt:/opt/dagster/app/mdharura_dbt
+      # - ./etl/mdharura_dlt:/opt/dagster/app/mdharura_dlt
+      # - ./etl/mdharura_dbt:/opt/dagster/app/mdharura_dbt
       - ./etl/definitions.py:/opt/dagster/app/definitions.py
       - ./etl/assets.py:/opt/dagster/app/assets.py
       - ./etl/project.py:/opt/dagster/app/project.py
