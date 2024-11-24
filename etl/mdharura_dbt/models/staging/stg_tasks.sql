@@ -300,7 +300,7 @@ SELECT
 
   CAST(
     CURRENT_DATE AS DATE
-  ) AS "LOAD_DATE"
+  ) AS "STG_LOAD_DATE"
 FROM
   {{ source(
     'central_raw_mdharura',

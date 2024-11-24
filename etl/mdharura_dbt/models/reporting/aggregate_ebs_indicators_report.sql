@@ -18,6 +18,92 @@ SELECT
         '4',
         '5',
         '6',
+        '7',
+        'h1',
+        'h2',
+        'h3',
+        'v1',
+        'v2',
+        'l1',
+        'l2',
+        'l3',
+        'p1',
+        'p2',
+        'p3',
+        'm1',
+        'm2',
+        'm3'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "SIGNALS_REPORTED",
+  SUM(
+    CASE
+      WHEN "CEBS_VERIFICATIONFORM_ID" IS NOT NULL
+      OR "HEBS_VERIFICATIONFORM_ID" IS NOT NULL
+      OR "VEBS_VERIFICATIONFORM_ID" IS NOT NULL -- OR "LEBS_VERIFICATIONFORM_ID" IS NOT NULL
+      THEN 1
+      ELSE 0
+    END
+  ) AS "SIGNALS_VERIFIED",
+  SUM(
+    CASE
+      WHEN "CEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" IN (
+        'Yes',
+        'yes'
+      )
+      OR "HEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" IN (
+        'Yes',
+        'yes'
+      )
+      OR "VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" IN (
+        'Yes',
+        'yes'
+      ) -- OR "LEBS_VERIFICATIONFORM_ISSTILLHAPPENING" IN (
+      --   'Yes',
+      --   'yes'
+      -- )
+      THEN 1
+      ELSE 0
+    END
+  ) AS "SIGNALS_VERIFIED_TRUE",
+  -- CEBS Signals --
+  SUM(
+    CASE
+      WHEN "CEBS_INVESTIGATIONFORM_ID" IS NOT NULL
+      OR "HEBS_INVESTIGATIONFORM_ID" IS NOT NULL
+      OR "VEBS_INVESTIGATIONFORM_ID" IS NOT NULL -- OR "LEBS_INVESTIGATIONFORM_ID" IS NOT NULL
+      THEN 1
+      ELSE 0
+    END
+  ) AS "SIGNALS_RISK_ASSESSED",
+  SUM(
+    CASE
+      WHEN "CEBS_RESPONSEFORM_ID" IS NOT NULL
+      OR "HEBS_RESPONSEFORM_ID" IS NOT NULL
+      OR "VEBS_RESPONSEFORM_ID" IS NOT NULL -- OR "LEBS_RESPONSEFORM_ID" IS NOT NULL
+      THEN 1
+      ELSE 0
+    END
+  ) AS "SIGNALS_RESPONDED",
+  SUM(
+    CASE
+      WHEN "CEBS_ESCALATIONFORM_ID" IS NOT NULL
+      OR "HEBS_ESCALATIONFORM_ID" IS NOT NULL
+      OR "VEBS_ESCALATIONFORM_ID" IS NOT NULL -- OR "LEBS_ESCALATIONFORM_ID" IS NOT NULL
+      THEN 1
+      ELSE 0
+    END
+  ) AS "SIGNALS_ESCALATED",
+  SUM(
+    CASE
+      WHEN "SIGNAL" IN(
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
         '7'
       ) THEN 1
       ELSE 0
@@ -29,7 +115,15 @@ SELECT
       ELSE 0
     END
   ) AS "CEBS_SIGNALS_VERIFIED",
-  -- SUM( CASE  WHEN  cebs_verificationform_isThreatStillExisting IN ('Yes', 'yes') then 1 else  0 end ) as  verified_true,
+  SUM(
+    CASE
+      WHEN "CEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" IN (
+        'Yes',
+        'yes'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "CEBS_SIGNALS_VERIFIED_TRUE",
   SUM(
     CASE
       WHEN "CEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
@@ -67,6 +161,15 @@ SELECT
   ) AS "HEBS_SIGNALS_VERIFIED",
   SUM(
     CASE
+      WHEN "HEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" IN (
+        'Yes',
+        'yes'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "HEBS_SIGNALS_VERIFIED_TRUE",
+  SUM(
+    CASE
       WHEN "HEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
       ELSE 0
     END
@@ -82,7 +185,49 @@ SELECT
       WHEN "HEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
       ELSE 0
     END
-  ) AS "HEBS_SIGNALS_ESCALATED"
+  ) AS "HEBS_SIGNALS_ESCALATED" -- VEBS Signals ---
+  SUM(
+    CASE
+      WHEN "SIGNAL" IN(
+        'v1',
+        'v2'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "VEBS_SIGNALS_REPORTED",
+  SUM(
+    CASE
+      WHEN "VEBS_VERIFICATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "VEBS_SIGNALS_VERIFIED",
+  SUM(
+    CASE
+      WHEN "VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" IN (
+        'Yes',
+        'yes'
+      ) THEN 1
+      ELSE 0
+    END
+  ) AS "VEBS_SIGNALS_VERIFIED_TRUE",
+  SUM(
+    CASE
+      WHEN "VEBS_INVESTIGATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "VEBS_SIGNALS_RISK_ASSESSED",
+  SUM(
+    CASE
+      WHEN "VEBS_RESPONSEFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "VEBS_SIGNALS_RESPONDED",
+  SUM(
+    CASE
+      WHEN "VEBS_ESCALATIONFORM_ID" IS NOT NULL THEN 1
+      ELSE 0
+    END
+  ) AS "VEBS_SIGNALS_ESCALATED"
 FROM
   {{ ref('fct_tasks') }} AS tasks
   LEFT JOIN {{ ref('dim_date') }} AS dim_date
