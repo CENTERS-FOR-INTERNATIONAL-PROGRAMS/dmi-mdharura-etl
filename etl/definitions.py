@@ -21,9 +21,9 @@ dbt_schedule_job = define_asset_job(
     selection=build_dbt_asset_selection(
         [mdharura_dbt_assets],
     ),
-    config=RunConfig(
-        ops={"mdharura_dbt_assets": DbtConfig(full_refresh=True, seed=True)}
-    ),
+    # config=RunConfig(
+    #     ops={"mdharura_dbt_assets": DbtConfig(full_refresh=False, seed=True)}
+    # ),
 )
 
 dbt_assets_schedule = build_schedule_from_dbt_selection(
@@ -33,6 +33,9 @@ dbt_assets_schedule = build_schedule_from_dbt_selection(
     # dbt_select="tag:daily",
     # If your definition of `@dbt_assets` has Dagster Configuration, you can specify it here.
     # config=RunConfig(ops={"my_dbt_assets": MyDbtConfig(full_refresh=True)}),
+    #  config=RunConfig(
+    #     ops={"mdharura_dbt_assets": DbtConfig(full_refresh=False, seed=True)}
+    # ),
 )
 
 
