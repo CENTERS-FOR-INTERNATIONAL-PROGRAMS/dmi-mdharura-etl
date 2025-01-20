@@ -14,7 +14,6 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.etl
-    container_name: mdharura_etl
     image: mdharura_etl_image
     restart: always
     depends_on:
@@ -70,10 +69,6 @@ services:
       - -w
       - workspace.yaml
     container_name: mdharura_etl_webserver
-    # expose:
-    #   - "3000"
-    ports:
-      - "${DAGSTER_WEB_PORT}:${DAGSTER_WEB_PORT}"
     network_mode: "host"
     environment:
       DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
@@ -97,7 +92,7 @@ services:
 
     volumes: # Make docker client accessible so we can terminate containers from the webserver
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ${DAGSTER_VOLUME}:/tmp/io_manager_storage
     # networks:
     #   - mdharura_etl_network
     depends_on:
@@ -143,7 +138,7 @@ services:
 
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ${DAGSTER_VOLUME}:/tmp/io_manager_storage
     # networks:
     #   - mdharura_etl_network
     network_mode: "host"

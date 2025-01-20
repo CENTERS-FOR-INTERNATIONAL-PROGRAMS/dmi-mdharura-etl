@@ -367,10 +367,6 @@ services:
   # Comment out everything below this point if you are using an external Postgres database
   db:
     container_name: supabase-db
-    # image: supabase/postgres:15.6.1.140
-    # image: supabase/postgres:15.1.1.78
-    # image: supabase/postgres:15.6.1.128
-    # image: supabase/postgres:15.1.0.108
     image: supabase/postgres:15.8.1.003
     healthcheck:
       test: pg_isready -U postgres -h localhost
@@ -408,7 +404,7 @@ services:
       # Initialize the database settings with JWT_SECRET and JWT_EXP
       - ./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
       # PGDATA directory is persisted between restarts
-      - ./volumes/db/data:/var/lib/postgresql/data:Z
+      - ${SUPABASE_DB_VOLUME}:/var/lib/postgresql/data:Z
       # Changes required for internal supabase data such as _analytics
       - ./volumes/db/_supabase.sql:/docker-entrypoint-initdb.d/migrations/97-_supabase.sql:Z
       # Changes required for Analytics support
