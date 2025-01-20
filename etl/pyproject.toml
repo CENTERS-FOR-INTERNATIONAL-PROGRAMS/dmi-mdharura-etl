@@ -9,6 +9,7 @@ dependencies = [
     "dagster",
     "dlt",
     "dagster-webserver",
+    "dagster-postgres",
     "pymongo",
     "pymongoarrow",
     "dagster-dbt",

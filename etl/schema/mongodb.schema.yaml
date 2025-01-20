@@ -118,6 +118,69 @@ tables:
     resource: roles
     x-normalizer:
       seen-data: true
+  units:
+    columns:
+      _id:
+        nullable: false
+        primary_key: true
+        data_type: text
+      _status:
+        data_type: text
+        nullable: true
+      name:
+        data_type: text
+        nullable: true
+      type:
+        data_type: text
+        nullable: true
+      created_at:
+        data_type: timestamp
+        nullable: true
+      updated_at:
+        data_type: timestamp
+        nullable: true
+      v:
+        data_type: bigint
+        nullable: true
+      state:
+        data_type: text
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+      code:
+        data_type: text
+        nullable: true
+      parent:
+        data_type: text
+        nullable: true
+      uid:
+        data_type: text
+        nullable: true
+      date_last_reported___id:
+        data_type: text
+        nullable: true
+      date_last_reported__test:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__live:
+        data_type: timestamp
+        nullable: true
+    write_disposition: replace
+    resource: units
+    x-normalizer:
+      seen-data: true
   tasks:
     columns:
       _id:
@@ -1025,69 +1088,6 @@ tables:
         nullable: true
     write_disposition: replace
     resource: tasks
-    x-normalizer:
-      seen-data: true
-  units:
-    columns:
-      _id:
-        nullable: false
-        primary_key: true
-        data_type: text
-      _status:
-        data_type: text
-        nullable: true
-      name:
-        data_type: text
-        nullable: true
-      type:
-        data_type: text
-        nullable: true
-      created_at:
-        data_type: timestamp
-        nullable: true
-      updated_at:
-        data_type: timestamp
-        nullable: true
-      v:
-        data_type: bigint
-        nullable: true
-      state:
-        data_type: text
-        nullable: true
-      _dlt_load_id:
-        data_type: text
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      code:
-        data_type: text
-        nullable: true
-      parent:
-        data_type: text
-        nullable: true
-      uid:
-        data_type: text
-        nullable: true
-      date_last_reported___id:
-        data_type: text
-        nullable: true
-      date_last_reported__test:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__updated_at:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__created_at:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__live:
-        data_type: timestamp
-        nullable: true
-    write_disposition: replace
-    resource: units
     x-normalizer:
       seen-data: true
   _dlt_pipeline_state:

@@ -25,28 +25,29 @@ services:
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
       DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
-      DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+      DAGSTER_POSTGRES_PORT: ${POSTGRES_BIND_PORT}
       DAGSTER_CURRENT_IMAGE: "mdharura_etl_image"
       DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
       DBT_DATABASE_DEV: ${POSTGRES_DB}
       DBT_SCHEMA: "mdharura_dbt"
-      DBT_PORT_DEV: ${POSTGRES_PORT}
+      DBT_PORT_DEV: ${POSTGRES_BIND_PORT}
       DBT_USER_DEV: ${POSTGRES_USER}
       DBT_PASSWORD_DEV: ${POSTGRES_PASSWORD}
-      SOURCES__MONGODB__CONNECTION__URL: "mongodb://host.docker.internal:27017/"
+      SOURCES__MONGODB__CONNECTION__URL: ${SOURCES__MONGODB__CONNECTION__URL}
       DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
       DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
       DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
       DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
-      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_PORT}
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_BIND_PORT}
       DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
-    networks:
-      - mdharura_etl_network
+    # networks:
+    #   - mdharura_etl_network
+    network_mode: "host"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./etl/mdharura_dlt:/opt/dagster/app/mdharura_dlt
-      - ./etl/mdharura_dbt:/opt/dagster/app/mdharura_dbt
+      # - ./etl/mdharura_dlt:/opt/dagster/app/mdharura_dlt
+      # - ./etl/mdharura_dbt:/opt/dagster/app/mdharura_dbt
       - ./etl/definitions.py:/opt/dagster/app/definitions.py
       - ./etl/assets.py:/opt/dagster/app/assets.py
       - ./etl/project.py:/opt/dagster/app/project.py
@@ -65,40 +66,40 @@ services:
       - -h
       - "0.0.0.0"
       - -p
-      - "3000"
+      - "${DAGSTER_WEB_PORT}"
       - -w
       - workspace.yaml
     container_name: mdharura_etl_webserver
-    expose:
-      - "3000"
+    # expose:
+    #   - "3000"
     ports:
-      - "3000:3000"
-
+      - "${DAGSTER_WEB_PORT}:${DAGSTER_WEB_PORT}"
+    network_mode: "host"
     environment:
       DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
       DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
-      DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+      DAGSTER_POSTGRES_PORT: ${POSTGRES_BIND_PORT}
       DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
       DBT_DATABASE_DEV: ${POSTGRES_DB}
       DBT_SCHEMA: "mdharura_dbt"
-      DBT_PORT_DEV: ${POSTGRES_PORT}
+      DBT_PORT_DEV: ${POSTGRES_BIND_PORT}
       DBT_USER_DEV: ${POSTGRES_USER}
       DBT_PASSWORD_DEV: ${POSTGRES_PASSWORD}
-      SOURCES__MONGODB__CONNECTION__URL: "mongodb://host.docker.internal:27017/"
+      SOURCES__MONGODB__CONNECTION__URL: ${SOURCES__MONGODB__CONNECTION__URL}
       DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
       DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
       DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
       DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
-      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_PORT}
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_BIND_PORT}
       DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
 
     volumes: # Make docker client accessible so we can terminate containers from the webserver
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
-    networks:
-      - mdharura_etl_network
+    # networks:
+    #   - mdharura_etl_network
     depends_on:
       # docker_example_postgresql:
       #   condition: service_healthy
@@ -124,27 +125,28 @@ services:
       DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-      DAGSTER_POSTGRES_PORT: ${POSTGRES_PORT}
+      DAGSTER_POSTGRES_PORT: ${POSTGRES_BIND_PORT}
       DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
       DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
       DBT_DATABASE_DEV: ${POSTGRES_DB}
       DBT_SCHEMA: "mdharura_dbt"
-      DBT_PORT_DEV: ${POSTGRES_PORT}
+      DBT_PORT_DEV: ${POSTGRES_BIND_PORT}
       DBT_USER_DEV: ${POSTGRES_USER}
       DBT_PASSWORD_DEV: ${POSTGRES_PASSWORD}
-      SOURCES__MONGODB__CONNECTION__URL: "mongodb://host.docker.internal:27017/"
+      SOURCES__MONGODB__CONNECTION__URL: ${SOURCES__MONGODB__CONNECTION__URL}
       DESTINATION__POSTGRES__CREDENTIALS__DATABASE: ${POSTGRES_DB}
       DESTINATION__POSTGRES__CREDENTIALS__PASSWORD: ${POSTGRES_PASSWORD}
       DESTINATION__POSTGRES__CREDENTIALS__USERNAME: ${POSTGRES_USER}
       DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
-      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_PORT}
+      DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_BIND_PORT}
       DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
 
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
-    networks:
-      - mdharura_etl_network
+    # networks:
+    #   - mdharura_etl_network
+    network_mode: "host"
     depends_on:
       db:
         condition: service_healthy
