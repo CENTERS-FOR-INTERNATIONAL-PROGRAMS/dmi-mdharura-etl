@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.etl
-    image: mdharura_etl_runner
+    container_name: mdharura_etl_runner
     restart: always
     depends_on:
       db:
