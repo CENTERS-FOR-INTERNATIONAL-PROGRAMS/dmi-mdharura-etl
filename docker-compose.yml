@@ -10,11 +10,11 @@ services:
   # Multiple containers like this can be deployed separately - each just needs to run on
   # its own port, and have its own entry in the workspace.yaml file that's loaded by the
   # webserver.
-  mdharura_etl:
+  mdharura_etl_runner:
     build:
       context: .
       dockerfile: ./Dockerfile.etl
-    image: mdharura_etl_image
+    image: mdharura_etl_runner
     restart: always
     depends_on:
       db:
@@ -25,7 +25,7 @@ services:
       DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
       DAGSTER_POSTGRES_HOST: ${ETL_POSTGRES_HOST}
       DAGSTER_POSTGRES_PORT: ${POSTGRES_BIND_PORT}
-      DAGSTER_CURRENT_IMAGE: "mdharura_etl_image"
+      DAGSTER_CURRENT_IMAGE: "mdharura_etl_runner"
       DBT_SERVER_DEV: ${ETL_POSTGRES_HOST}
       DBT_DATABASE_DEV: ${POSTGRES_DB}
       DBT_SCHEMA: "mdharura_dbt"
@@ -94,7 +94,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      mdharura_etl:
+      mdharura_etl_runner:
         condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -137,7 +137,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      mdharura_etl:
+      mdharura_etl_runner:
         condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"

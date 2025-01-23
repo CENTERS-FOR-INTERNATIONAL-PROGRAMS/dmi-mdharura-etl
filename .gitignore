@@ -22,3 +22,5 @@ example/
 *DS_Store
 **db/data
 *.env.prod
+
+.github/
