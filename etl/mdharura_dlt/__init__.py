@@ -23,6 +23,7 @@ def mongodb(
     write_disposition: Optional[str] = dlt.config.value,
     parallel: Optional[bool] = dlt.config.value,
     limit: Optional[int] = None,
+    chunk_size: Optional[int] = 2000,
     filter_: Optional[Dict[str, Any]] = None,
 ) -> Iterable[DltResource]:
     """
@@ -73,6 +74,7 @@ def mongodb(
             incremental=incremental,
             parallel=parallel,
             limit=limit,
+            chunk_size=chunk_size,
             filter_=filter_ or {},
         )
 
