@@ -1,3 +1,12 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_dim_county_name ON {{this}} USING btree ("county");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_county_key ON {{this}} USING btree ("county_key");'
+    ]
+) }}
+
+
 WITH county_iso_code_source AS (
   SELECT
     DISTINCT county,

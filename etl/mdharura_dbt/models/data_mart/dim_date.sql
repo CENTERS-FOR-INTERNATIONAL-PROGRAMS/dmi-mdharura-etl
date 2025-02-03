@@ -1,3 +1,11 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_dim_date_name ON {{this}} USING btree ("date");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_date_key ON {{this}} USING btree ("date_key");'
+    ]
+) }}
+
 with date_spine as (
   {{- dbt_utils.date_spine(
       datepart="day",

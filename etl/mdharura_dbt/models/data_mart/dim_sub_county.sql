@@ -1,3 +1,13 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_dim_sub_county_name ON {{this}} USING btree ("sub_county");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_sub_county_key ON {{this}} USING btree ("sub_county_key");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_sub_ccounty_key ON {{this}} USING btree ("county_key");'
+    ]
+) }}
+
+
 WITH sub_county_data AS (
   SELECT
     {{ dbt_utils.generate_surrogate_key(['sub_county_source.unit_name']) }} AS sub_county_key,

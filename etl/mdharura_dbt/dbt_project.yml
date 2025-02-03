@@ -35,12 +35,15 @@ models:
     staging:
       +materialized: table
       +schema: staging
+      +quote_columns: true
     data_mart:
       +materialized: table
       +schema: data_mart
+      +quote_columns: true
     reporting:
       +materialized: table
       +schema: reporting
+      +quote_columns: true
 
 seeds:
   mdharura_dbt:

@@ -7,16 +7,19 @@ SELECT
   COALESCE(
     community_unit."COUNTY_KEY",
     health_facility."COUNTY_KEY",
+    subcounty."COUNTY_KEY",
     'unset'
   ) AS "COUNTY_KEY",
   COALESCE(
     community_unit."SUB_COUNTY_KEY",
     health_facility."SUB_COUNTY_KEY",
+    subcounty."SUB_COUNTY_KEY",
     'unset'
   ) AS "SUB_COUNTY_KEY",
   COALESCE(
     community_unit."COMMUNITY_UNIT_KEY",
     health_facility."HEALTH_FACILITY_KEY",
+    subcounty."SUB_COUNTY_KEY",
     'unset'
   ) AS "UNIT_KEY",
   tasks.*,
@@ -34,3 +37,5 @@ FROM
   ON community_unit."_ID" = tasks."UNIT_ID"
   LEFT JOIN {{ ref('fct_health_facilities') }} AS health_facility
   ON health_facility."_ID" = tasks."UNIT_ID"
+  LEFT JOIN {{ ref('fct_sub_county_units') }} AS subcounty
+  ON subcounty."_ID" = tasks."UNIT_ID"

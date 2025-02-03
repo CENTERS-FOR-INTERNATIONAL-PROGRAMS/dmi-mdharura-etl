@@ -1,3 +1,15 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_stg_tasks_id ON {{this}} USING btree ("_ID");',
+      'CREATE INDEX IF NOT EXISTS idx_stg_tasks_unit ON {{this}} USING btree ("UNIT_ID");',
+      'CREATE INDEX IF NOT EXISTS idx_stg_tasks_unit ON {{this}} USING btree ("SIGNAL");',
+      'CREATE INDEX IF NOT EXISTS idx_stg_tasks_createdat ON {{this}} USING btree ("CREATEDAT");',
+      'CREATE INDEX IF NOT EXISTS idx_stg_tasks_updatedat ON {{this}} USING btree ("UPDATEDAT");'
+    ]
+) }}
+
+
 {%- set columns = dbt_utils.get_filtered_columns_in_relation(
   from = source(
     'central_raw_mdharura',

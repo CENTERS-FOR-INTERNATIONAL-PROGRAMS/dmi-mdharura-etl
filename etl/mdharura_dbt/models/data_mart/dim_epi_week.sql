@@ -1,3 +1,13 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_dim_epi_wk_key ON {{this}} USING btree ("epi_week_key");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_epi_wk_start ON {{this}} USING btree ("start_of_week");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_epi_wk_end ON {{this}} USING btree ("end_of_week");',
+    ]
+) }}
+
+
 {% set start_date = '2020-01-01' %}
 {% set end_date = '2040-12-31' %}
 

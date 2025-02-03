@@ -1,3 +1,12 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_dim_cu_uid ON {{this}} USING btree ("uid");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_cu_code ON {{this}} USING btree ("code");'
+    ]
+) }}
+
+
 WITH source_data AS (
   SELECT
     {{ dbt_utils.generate_surrogate_key(

@@ -1,3 +1,16 @@
+{{ config(
+  post_hook = 
+    [
+      'CREATE INDEX IF NOT EXISTS idx_dim_hf_uid ON {{this}} USING btree ("uid");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_hf_name ON {{this}} USING btree ("name");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_hf_county_key ON {{this}} USING btree ("county_key");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_hf_subcounty_key ON {{this}} USING btree ("sub_county_key");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_hf_key ON {{this}} USING btree ("health_facility_key");',
+      'CREATE INDEX IF NOT EXISTS idx_dim_hf_code ON {{this}} USING btree ("code");'
+    ]
+) }}
+
+
 WITH source_data AS (
   SELECT
     {{ dbt_utils.generate_surrogate_key(
