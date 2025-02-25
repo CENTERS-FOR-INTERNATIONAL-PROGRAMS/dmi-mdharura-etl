@@ -1,6 +1,6 @@
-version: 2
-version_hash: xS+q02wCAa32QsY2hxS7eKhNLO9aFKJvKk8YwGKqcYI=
-engine_version: 10
+version: 4
+version_hash: VnOdTfm4Cl5gZQFYl4U7atbVfsRcPytbKffW8zBndCw=
+engine_version: 11
 name: mongodb
 tables:
   _dlt_version:
@@ -114,6 +114,9 @@ tables:
       date_last_verified__live:
         data_type: timestamp
         nullable: true
+      _v:
+        data_type: bigint
+        nullable: true
     write_disposition: replace
     resource: roles
     x-normalizer:
@@ -176,6 +179,9 @@ tables:
         nullable: true
       date_last_reported__live:
         data_type: timestamp
+        nullable: true
+      _v:
+        data_type: bigint
         nullable: true
     write_disposition: replace
     resource: units
@@ -1086,6 +1092,9 @@ tables:
       pmebs__notify_form__created_at:
         data_type: timestamp
         nullable: true
+      _v:
+        data_type: bigint
+        nullable: true
     write_disposition: replace
     resource: tasks
     x-normalizer:
@@ -1545,6 +1554,9 @@ normalizers:
   names: snake_case
   json:
     module: dlt.common.normalizers.json.relational
+  use_break_path_on_normalize: false
 previous_hashes:
+- o9gH2GkRFR4lyvF0uY4AbtsiiYb7pRhi0FZwPeKqK9A=
+- xS+q02wCAa32QsY2hxS7eKhNLO9aFKJvKk8YwGKqcYI=
 - nbeJgRvx5Vn5UUyIiLgiBhK9EQBjeOVLixPHraGxs1I=
 - j7kMBr9xx3Z0WLu4Nl8aGfcZdmq+JOEE+hcLoarCK2A=

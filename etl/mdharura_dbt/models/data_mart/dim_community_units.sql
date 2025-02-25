@@ -1,58 +1,46 @@
-{{ config(
-  post_hook = 
-    [
-      'CREATE INDEX IF NOT EXISTS idx_dim_cu_uid ON {{this}} USING btree ("uid");',
-      'CREATE INDEX IF NOT EXISTS idx_dim_cu_code ON {{this}} USING btree ("code");'
-    ]
-) }}
+{{
+    config(
+        post_hook=[
+            'CREATE INDEX IF NOT EXISTS idx_dim_cu_uid ON {{this}} USING btree ("uid");',
+            'CREATE INDEX IF NOT EXISTS idx_dim_cu_code ON {{this}} USING btree ("code");',
+        ]
+    )
+}}
 
 
-WITH source_data AS (
-  SELECT
-    {{ dbt_utils.generate_surrogate_key(
-      ['units_source.community_unit_uid']
-    ) }} AS community_unit_key,
-    units_source.community_unit_uid AS "uid",
-    units_source.community_unit AS "name",
-    units_source.community_code AS code,
-    dim_county.county_key,
-    dim_sub_county.sub_county_key
-  FROM
-    {{ ref('kenya_community_units') }} AS units_source
-    LEFT JOIN {{ ref('dim_county') }} AS dim_county
-    ON CONCAT(
-      dim_county.county,
-      ' ',
-      'County'
-    ) = units_source.county
-    LEFT JOIN {{ ref('dim_sub_county') }} AS dim_sub_county
-    ON CONCAT(
-      dim_sub_county.sub_county,
-      ' ',
-      'Sub County'
-    ) = CASE
-      WHEN units_source.subcounty = CONCAT(
-        'Buuri',
-        ' ',
-        ' ',
-        'East Sub County'
-      ) THEN 'Buuri East Sub County'
-      WHEN units_source.subcounty = 'Suguta Sub county' THEN 'Suguta Sub County'
-      ELSE units_source.subcounty
-    END
-  UNION
-  SELECT
-    'unset' AS "uid",
-    'unset' AS "name",
-    'unset' AS code,
-    'unset' AS county_key,
-    'unset' AS sub_county_key,
-    'unset' AS community_unit_key
-)
-SELECT
-  source_data.*,
-  CAST(
-    CURRENT_DATE AS DATE
-  ) AS load_date
-FROM
-  source_data
+with
+    source_data as (
+        select
+            {{ dbt_utils.generate_surrogate_key(["units_source.community_unit_uid"]) }}
+            as community_unit_key,
+            units_source.community_unit_uid as "uid",
+            units_source.community_unit as "name",
+            units_source.community_code as code,
+            dim_county.county_key,
+            dim_sub_county.sub_county_key
+        from {{ ref("kenya_community_units") }} as units_source
+        left join
+            {{ ref("dim_county") }} as dim_county
+            on concat(dim_county.county, ' ', 'County') = units_source.county
+        left join
+            {{ ref("dim_sub_county") }} as dim_sub_county
+            on concat(dim_sub_county.sub_county, ' ', 'Sub County') = case
+                when
+                    units_source.subcounty
+                    = concat('Buuri', ' ', ' ', 'East Sub County')
+                then 'Buuri East Sub County'
+                when units_source.subcounty = 'Suguta Sub county'
+                then 'Suguta Sub County'
+                else units_source.subcounty
+            end
+        union
+        select
+            'unset' as "uid",
+            'unset' as "name",
+            'unset' as code,
+            'unset' as county_key,
+            'unset' as sub_county_key,
+            'unset' as community_unit_key
+    )
+select source_data.*, cast(current_date as date) as load_date
+from source_data

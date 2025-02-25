@@ -44,6 +44,10 @@ models:
       +materialized: table
       +schema: reporting
       +quote_columns: true
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+      +quote_columns: true
 
 seeds:
   mdharura_dbt:

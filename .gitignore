@@ -24,3 +24,5 @@ example/
 *.env.prod
 
 .github/
+
+*mongodb_pipeline.py

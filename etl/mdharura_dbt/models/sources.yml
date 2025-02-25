@@ -10,6 +10,60 @@ sources:
         description: This table contains raw data for user roles on M-dharura app
       - name: units
         description: This table contains raw data for community, health facility, subcounty, county units on M-dharura app
+
+      - name: tasks__units
+        description: This table contains flattened entries for unit hierachy for a task
+      - name: tasks__suggestions
+        description: This table contains flattened entries for unit/user ids for a task
+
+        # Event Categories
+      - name: tasks__cebs__investigation_form__event_categories
+        description: This table contains flattened entries for tasks investigation form event categories
+      - name: tasks__hebs__investigation_form__event_categories
+        description: This table contains flattened entries for tasks investigation form event categories
+      - name: tasks__vebs__investigation_form__event_categories
+        description: This table contains flattened entries for tasks investigation form event categories
+
+        # Response Activities
+      - name: tasks__cebs__investigation_form__response_activities
+        description: This table contains flattened entries for tasks investigation form response activities
+      - name: tasks__hebs__investigation_form__response_activities
+        description: This table contains flattened entries for tasks investigation form response activities
+      - name: tasks__vebs__investigation_form__response_activities
+        description: This table contains flattened entries for tasks investigation form response activities
+
+        # Systems Affected By Event
+      - name: tasks__cebs__investigation_form__systems_affected_by_event
+        description: This table contains flattened entries for tasks investigation form systems affected by event
+      - name: tasks__hebs__investigation_form__systems_affected_by_event
+        description: This table contains flattened entries for tasks investigation form systems affected by event
+      - name: tasks__vebs__investigation_form__systems_affected_by_event
+        description: This table contains flattened entries for tasks investigation form systems affected by event
+
+        # Recommendations
+      - name: tasks__cebs__response_form__recommendations
+        description: This table contains flattened entries for tasks response form recommendations
+      - name: tasks__hebs__response_form__recommendations
+        description: This table contains flattened entries for tasks response form recommendations
+      - name: tasks__vebs__response_form__recommendations
+        description: This table contains flattened entries for tasks response form recommendations
+
+        # Response Activities
+      - name: tasks__cebs__response_form__response_activities
+        description: This table contains flattened entries for tasks response form response activities
+      - name: tasks__hebs__response_form__response_activities
+        description: This table contains flattened entries for tasks response form response activities
+      - name: tasks__vebs__response_form__response_activities
+        description: This table contains flattened entries for tasks response form response activities
+
+        # Event Statuses
+      - name: tasks__cebs__response_form__event_statuses
+        description: This table contains flattened entries for tasks response form event statuses
+      - name: tasks__hebs__response_form__event_statuses
+        description: This table contains flattened entries for tasks response form event statuses
+      - name: tasks__vebs__response_form__event_statuses
+        description: This table contains flattened entries for tasks response form event statuses
+
   - name: staging
     database: "{{ env_var('DBT_DATABASE_DEV') }}"
     schema: mdharura_dbt_staging

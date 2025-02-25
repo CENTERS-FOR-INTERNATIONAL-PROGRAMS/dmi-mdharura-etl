@@ -124,6 +124,7 @@ def mongodb_collection(
         mongo_database = client[database]
 
     collection_obj = mongo_database[collection]
+    
 
     return dlt.resource(  # type: ignore
         collection_documents,

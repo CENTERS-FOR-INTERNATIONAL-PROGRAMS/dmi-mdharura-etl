@@ -34,6 +34,15 @@ def dlt_asset_factory(collection_list):
             # Getting Data From MongoDB    
             data = mongodb(URL, db, parallel=True).with_resources(*collection_name)
 
+            print(data.resources)
+
+
+            if collection_name == "tasks":
+             data.resources[collection_name].apply_hints(columns={"units": {"data_type": "string"}})
+             data.collection_name.apply_hints(columns={"units": {"data_type": "string"}})
+
+            print(data.resources)
+
             logger = get_dagster_logger()
             results = pipeline.load_collection(data, db)
             logger.info(results)
