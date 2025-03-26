@@ -40,8 +40,7 @@ services:
       DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
       DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_BIND_PORT}
       DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
-    networks:
-      - mdharura_etl_network
+    network_mode: host
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -68,8 +67,7 @@ services:
       - workspace.yaml
     container_name: mdharura_etl_webserver
     image: mdharura_etl_webserver
-    networks:
-      - mdharura_etl_network
+    network_mode: host
     ports:
       - "${DAGSTER_WEB_PORT}:${DAGSTER_WEB_PORT}"
     environment:
@@ -138,8 +136,7 @@ services:
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DAGSTER_VOLUME}:/tmp/io_manager_storage
-    networks:
-      - mdharura_etl_network
+    network_mode: host
     depends_on:
       db:
         condition: service_healthy
@@ -152,7 +149,3 @@ networks:
   mdharura_etl_network:
     driver: bridge
     name: mdharura_etl_network
-    ipam:
-      config:
-        - subnet: "172.17.0.0/16"
-          gateway: "172.17.0.1"
