@@ -61,7 +61,7 @@ services:
     entrypoint:
       - dagster-webserver
       - -h
-      - "0.0.0.0"
+      - "127.0.0.1"
       - -p
       - "${DAGSTER_WEB_PORT}"
       - -w
