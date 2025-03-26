@@ -68,8 +68,6 @@ services:
     container_name: mdharura_etl_webserver
     image: mdharura_etl_webserver
     network_mode: host
-    ports:
-      - "${DAGSTER_WEB_PORT}:${DAGSTER_WEB_PORT}"
     environment:
       DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
