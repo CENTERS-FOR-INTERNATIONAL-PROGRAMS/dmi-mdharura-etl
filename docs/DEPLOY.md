@@ -9,7 +9,9 @@ docker build -t mdharura_etl_webserver . -f Dockerfile.dagster --no-cache
 docker build -t mdharura_etl_daemon . -f Dockerfile.dagster --no-cache
 
 
-docker compose up -d --force-recreate --no-deps --build --no-cache
+docker compose build --no-cache
+docker compose up -d --force-recreate --no-deps
+
 
 
 Install sqlfmt, to format sql.
