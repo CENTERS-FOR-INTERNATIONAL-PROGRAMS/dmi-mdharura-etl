@@ -61,7 +61,7 @@ services:
     entrypoint:
       - dagster-webserver
       - -h
-      - "127.0.0.1"
+      - "0.0.0.0"
       - -p
       - "${DAGSTER_WEB_PORT}"
       - -w
@@ -152,3 +152,7 @@ networks:
   mdharura_etl_network:
     driver: bridge
     name: mdharura_etl_network
+    ipam:
+      config:
+        - subnet: "172.17.0.0/16"
+          gateway: "172.17.0.1"
