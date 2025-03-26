@@ -15,6 +15,7 @@ services:
       context: .
       dockerfile: ./Dockerfile.etl
     container_name: mdharura_etl_runner
+    image: mdharura_etl_runner
     restart: always
     depends_on:
       db:
@@ -39,12 +40,11 @@ services:
       DESTINATION__POSTGRES__CREDENTIALS__HOST: ${ETL_POSTGRES_HOST}
       DESTINATION__POSTGRES__CREDENTIALS__PORT: ${POSTGRES_BIND_PORT}
       DESTINATION__POSTGRES__CREDENTIALS__CONNECT_TIMEOUT: "15"
-    network_mode: "host"
+    networks:
+      - mdharura_etl_network
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      # - ./etl/mdharura_dlt:/opt/dagster/app/mdharura_dlt
-      # - ./etl/mdharura_dbt:/opt/dagster/app/mdharura_dbt
       - ./etl/definitions.py:/opt/dagster/app/definitions.py
       - ./etl/assets.py:/opt/dagster/app/assets.py
       - ./etl/project.py:/opt/dagster/app/project.py
@@ -67,7 +67,11 @@ services:
       - -w
       - workspace.yaml
     container_name: mdharura_etl_webserver
-    network_mode: "host"
+    image: mdharura_etl_webserver
+    networks:
+      - mdharura_etl_network
+    ports:
+      - "${DAGSTER_WEB_PORT}:${DAGSTER_WEB_PORT}"
     environment:
       DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
       DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -109,6 +113,7 @@ services:
       - dagster-daemon
       - run
     container_name: mdharura_etl_daemon
+    image: mdharura_etl_daemon
     restart: on-failure
     environment:
       DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
@@ -133,7 +138,8 @@ services:
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DAGSTER_VOLUME}:/tmp/io_manager_storage
-    network_mode: "host"
+    networks:
+      - mdharura_etl_network
     depends_on:
       db:
         condition: service_healthy

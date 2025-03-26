@@ -36,6 +36,7 @@ dbt_assets_schedule = build_schedule_from_dbt_selection(
     #  config=RunConfig(
     #     ops={"mdharura_dbt_assets": DbtConfig(full_refresh=False, seed=True)}
     # ),
+    default_status=DefaultScheduleStatus.RUNNING,
 )
 
 

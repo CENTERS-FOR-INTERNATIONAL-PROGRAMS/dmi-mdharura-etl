@@ -4,7 +4,9 @@ https://supabase.com/docs/guides/self-hosting/docker
 
 <!-- https://supabase.com/docs/guides/self-hosting/docker -->
 
-docker build -t mdharura_etl . -f Dockerfile.etl --no-cache
+docker build -t mdharura_etl_runner . -f Dockerfile.etl --no-cache
+docker build -t mdharura_etl_webserver . -f Dockerfile.dagster --no-cache
+docker build -t mdharura_etl_daemon . -f Dockerfile.dagster --no-cache
 
 
 Install sqlfmt, to format sql.

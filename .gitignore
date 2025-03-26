@@ -22,6 +22,7 @@ example/
 *DS_Store
 **db/data
 *.env.prod
+*.env.old
 
 .github/
 
