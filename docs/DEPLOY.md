@@ -8,6 +8,8 @@ docker build -t mdharura_etl_runner . -f Dockerfile.etl --no-cache
 docker build -t mdharura_etl_webserver . -f Dockerfile.dagster --no-cache
 docker build -t mdharura_etl_daemon . -f Dockerfile.dagster --no-cache
 
+docker compose build --no-cache
+
 
 docker compose build
 docker compose up -d --force-recreate --no-deps
