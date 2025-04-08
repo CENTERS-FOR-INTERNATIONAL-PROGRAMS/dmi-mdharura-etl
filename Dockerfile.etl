@@ -44,8 +44,6 @@ WORKDIR /opt/dagster/app/mdharura_dbt
 
 RUN dbt deps
 
-RUN dbt parse --no-partial-parse
-
 WORKDIR /opt/dagster/app
 
 # Run dagster gRPC server on port 6200
