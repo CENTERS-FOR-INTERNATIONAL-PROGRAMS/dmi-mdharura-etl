@@ -49,7 +49,6 @@ RUN dbt parse --no-partial-parse
 WORKDIR /opt/dagster/app
 
 # Run dagster gRPC server on port 6200
-
 EXPOSE 6200
 
 # CMD allows this to be overridden from run launchers or executors that want
