@@ -12,7 +12,7 @@ sync_job = define_asset_job(
 
 sync_schedule = ScheduleDefinition(
     job=sync_job,
-    cron_schedule="*/60 * * * *",
+    cron_schedule="*/50 * * * *",
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
