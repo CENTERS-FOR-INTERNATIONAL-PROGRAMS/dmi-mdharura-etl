@@ -12,7 +12,7 @@ sync_job = define_asset_job(
 
 sync_schedule = ScheduleDefinition(
     job=sync_job,
-    cron_schedule="*/20 * * * *",
+    cron_schedule="*/60 * * * *",
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
@@ -51,8 +51,8 @@ defs = Definitions(
         ),
         "dbt": DbtCliResource(project_dir=dbt_project),
     },
-    # jobs=[sync_job],
+  
     jobs=[sync_job, dbt_schedule_job],
-    # schedules=[sync_schedule],
+    
     schedules=[sync_schedule, dbt_assets_schedule],
 )
