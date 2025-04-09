@@ -1,3 +1,23 @@
+{{
+    config(
+        post_hook=[
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_signal ON {{this}} USING btree ("SIGNAL");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_state ON {{this}} USING btree ("STATE");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_unit_key ON {{this}} USING btree ("UNIT_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_county_key ON {{this}} USING btree ("COUNTY_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_sub_county_key ON {{this}} USING btree ("SUB_COUNTY_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_epi_week_key ON {{this}} USING btree ("EPI_WEEK_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_date_key ON {{this}} USING btree ("DATE_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_hebs_v_threat ON {{this}} USING btree ("HEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_cebs_v_threat ON {{this}} USING btree ("CEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_v_threat ON {{this}} USING btree ("VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_hebs_r_recommendations ON {{this}} USING gin ("HEBS_RESPONSEFORM_RECOMMENDATIONS");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_cebs_r_recommendations ON {{this}} USING gin ("CEBS_RESPONSEFORM_RECOMMENDATIONS");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_r_recommendations ON {{this}} USING gin ("VEBS_RESPONSEFORM_RECOMMENDATIONS");',
+        ]
+    )
+}}
+
 select
     dim_date.date_key as "DATE_KEY",
     coalesce(dim_epi_week.epi_week_key, 'unset') as "EPI_WEEK_KEY",

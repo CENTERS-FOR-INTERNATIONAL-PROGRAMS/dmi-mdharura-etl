@@ -1,3 +1,17 @@
+{{
+    config(
+        post_hook=[
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_date ON {{this}} USING btree ("DATE");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_epiweek ON {{this}} USING btree ("EPI_WEEK");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_year ON {{this}} USING btree ("YEAR");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_county ON {{this}} USING btree ("COUNTY");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_subcounty ON {{this}} USING btree ("SUB_COUNTY");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_unit_name ON {{this}} USING btree ("UNIT_NAME");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_aggregate_indicators_unit_type ON {{this}} USING btree ("UNIT_TYPE");',
+        ]
+    )
+}}
+
 select
     dim_date.date as "DATE",
     dim_epi_week.week_number as "EPI_WEEK",
@@ -89,9 +103,22 @@ select
     sum(
         case
             when
+                "CEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "CEBS_ESCALATIONFORM_ID" is null
+                or "HEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "HEBS_ESCALATIONFORM_ID" is null
+                or "VEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "VEBS_ESCALATIONFORM_ID" is null
+            then 1
+            else 0
+        end
+    ) as "SIGNALS_TO_BE_ESCALATED",
+    sum(
+        case
+            when
                 "CEBS_ESCALATIONFORM_ID" is not null
                 or "HEBS_ESCALATIONFORM_ID" is not null
-                or "VEBS_ESCALATIONFORM_ID" is not null  -- OR "LEBS_ESCALATIONFORM_ID" IS NOT NULL
+                or "VEBS_ESCALATIONFORM_ID" is not null
             then 1
             else 0
         end
@@ -115,6 +142,16 @@ select
     sum(
         case when "CEBS_RESPONSEFORM_ID" is not null then 1 else 0 end
     ) as "CEBS_SIGNALS_RESPONDED",
+
+    sum(
+        case
+            when
+                "CEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "CEBS_ESCALATIONFORM_ID" is null
+            then 1
+            else 0
+        end
+    ) as "CEBS_SIGNALS_TO_BE_ESCALATED",
     sum(
         case when "CEBS_ESCALATIONFORM_ID" is not null then 1 else 0 end
     ) as "CEBS_SIGNALS_ESCALATED",
@@ -139,6 +176,16 @@ select
         case when "HEBS_RESPONSEFORM_ID" is not null then 1 else 0 end
     ) as "HEBS_SIGNALS_RESPONDED",
     sum(
+        case
+            when
+                "HEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "HEBS_ESCALATIONFORM_ID" is null
+            then 1
+            else 0
+        end
+    ) as "HEBS_SIGNALS_TO_BE_ESCALATED",
+
+    sum(
         case when "HEBS_ESCALATIONFORM_ID" is not null then 1 else 0 end
     ) as "HEBS_SIGNALS_ESCALATED",
     -- VEBS Signals ---
@@ -162,8 +209,18 @@ select
         case when "VEBS_RESPONSEFORM_ID" is not null then 1 else 0 end
     ) as "VEBS_SIGNALS_RESPONDED",
     sum(
+        case
+            when
+                "VEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "VEBS_ESCALATIONFORM_ID" is null
+            then 1
+            else 0
+        end
+    ) as "VEBS_SIGNALS_TO_BE_ESCALATED",
+    sum(
         case when "VEBS_ESCALATIONFORM_ID" is not null then 1 else 0 end
     ) as "VEBS_SIGNALS_ESCALATED",
+
     sum(
         case when "VIA" in ('SMS', 'sms') then 1 else 0 end
     ) as "SIGNALS_REPORTED_VIA_SMS",

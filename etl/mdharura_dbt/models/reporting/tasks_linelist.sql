@@ -1,3 +1,18 @@
+{{
+    config(
+        post_hook=[
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_date ON {{this}} USING btree ("DATE");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_epiweek ON {{this}} USING btree ("EPI_WEEK");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_year ON {{this}} USING btree ("YEAR");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_county ON {{this}} USING btree ("COUNTY");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_subcounty ON {{this}} USING btree ("SUB_COUNTY");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_unit_name ON {{this}} USING btree ("UNIT_NAME");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_tasks_linelist_unit_type ON {{this}} USING btree ("UNIT_TYPE");',
+        ]
+    )
+}}
+
+
 select
     dim_date.date as "DATE",
     dim_epi_week.week_number as "EPI_WEEK",

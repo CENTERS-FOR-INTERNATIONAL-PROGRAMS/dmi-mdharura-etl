@@ -27,3 +27,5 @@ example/
 .github/
 
 *mongodb_pipeline.py
+
+*ROLES.md
