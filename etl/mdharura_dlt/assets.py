@@ -1,4 +1,5 @@
 from dagster import AssetOut, OpExecutionContext, get_dagster_logger, multi_asset
+import dlt
 from . import mongodb
 from .resources import MdharuraDltResource
 import os
@@ -30,18 +31,12 @@ def dlt_asset_factory(collection_list):
 
         )
         def collections_asset(context: OpExecutionContext, pipeline: MdharuraDltResource):
-
             # Getting Data From MongoDB    
-            data = mongodb(URL, db, parallel=True).with_resources(*collection_name)
-
-            print(data.resources)
-
+            data = mongodb(URL, db, parallel=True, incremental=dlt.sources.incremental("updated_at", "2021-01-01T00:00:00Z", lag=604800, primary_key="_id")).with_resources(*collection_name)
 
             if collection_name == "tasks":
-             data.resources[collection_name].apply_hints(columns={"units": {"data_type": "string"}})
-             data.collection_name.apply_hints(columns={"units": {"data_type": "string"}})
-
-            print(data.resources)
+                data.resources[collection_name].apply_hints(columns={"units": {"data_type": "string"}})
+                data.collection_name.apply_hints(columns={"units": {"data_type": "string"}})
 
             logger = get_dagster_logger()
             results = pipeline.load_collection(data, db)
