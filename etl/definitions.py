@@ -42,7 +42,6 @@ dbt_assets_schedule = build_schedule_from_dbt_selection(
 
 defs = Definitions(
     assets=[*mdharura_assets, mdharura_dbt_assets],
-    
     resources={
         "pipeline": MdharuraDltResource(
             pipeline_name = "mdharura",
@@ -51,8 +50,6 @@ defs = Definitions(
         ),
         "dbt": DbtCliResource(project_dir=dbt_project),
     },
-  
     jobs=[sync_job, dbt_schedule_job],
-    
     schedules=[sync_schedule, dbt_assets_schedule],
 )
