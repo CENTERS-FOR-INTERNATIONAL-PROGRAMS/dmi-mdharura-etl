@@ -53,4 +53,5 @@ EXPOSE 6200
 # to run other commands against your repository
 # CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "6200"]
 
-CMD ["dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "6200", "--python-file", "/opt/dagster/app/definitions.py", "-d",  "/opt/dagster/app"]
+# CMD ["dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "6200", "--python-file", "/opt/dagster/app/definitions.py", "-d",  "/opt/dagster/app"]
+CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "6200", "--python-file", "/opt/dagster/app/definitions.py", "-d",  "/opt/dagster/app"]

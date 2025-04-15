@@ -57,3 +57,8 @@ event_log_storage:
         env: DAGSTER_POSTGRES_DB
       port:
         env: DAGSTER_POSTGRES_PORT
+
+# Configures how long Dagster waits for code locations
+# to load before timing out.
+code_servers:
+  local_startup_timeout: 360
