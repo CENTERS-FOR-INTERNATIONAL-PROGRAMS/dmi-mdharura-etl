@@ -309,14 +309,20 @@ select
     sum(roles."CEBS_REGISTERED") as "CEBS_REGISTERED",
     sum(roles."CEBS_INVESTIGATING") as "CEBS_INVESTIGATING",
     sum(roles."CEBS_RESPONDING") as "CEBS_RESPONDING",
+    sum(roles."CEBS_ESCALATING") as "CEBS_ESCALATING",
+    sum(roles."CEBS_SUMMARIZING") as "CEBS_SUMMARIZING",
 
     sum(roles."HEBS_REGISTERED") as "HEBS_REGISTERED",
     sum(roles."HEBS_INVESTIGATING") as "HEBS_INVESTIGATING",
     sum(roles."HEBS_RESPONDING") as "HEBS_RESPONDING",
+    sum(roles."HEBS_ESCALATING") as "HEBS_ESCALATING",
+    sum(roles."HEBS_SUMMARIZING") as "HEBS_SUMMARIZING",
 
     sum(roles."VEBS_REGISTERED") as "VEBS_REGISTERED",
     sum(roles."VEBS_INVESTIGATING") as "VEBS_INVESTIGATING",
-    sum(roles."VEBS_RESPONDING") as "VEBS_RESPONDING"
+    sum(roles."VEBS_RESPONDING") as "VEBS_RESPONDING",
+    sum(roles."VEBS_ESCALATING") as "VEBS_ESCALATING",
+    sum(roles."VEBS_SUMMARIZING") as "VEBS_SUMMARIZING"
 
 from final_data as roles
 left join {{ ref("dim_date") }} as dim_date on dim_date.date_key = roles."DATE_KEY"
