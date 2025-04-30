@@ -6,6 +6,7 @@
             'CREATE INDEX IF NOT EXISTS idx_stg_tasks_signal ON {{this}} USING btree ("SIGNAL");',
             'CREATE INDEX IF NOT EXISTS idx_stg_tasks_createdat ON {{this}} USING btree ("CREATEDAT");',
             'CREATE INDEX IF NOT EXISTS idx_stg_tasks_updatedat ON {{this}} USING btree ("UPDATEDAT");',
+            'CREATE INDEX IF NOT EXISTS idx_stg_tasks_updatedat ON {{this}} USING btree ("STATE");',
         ]
     )
 }}
