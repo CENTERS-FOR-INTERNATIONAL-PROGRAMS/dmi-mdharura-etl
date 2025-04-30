@@ -7,6 +7,7 @@
             'CREATE INDEX IF NOT EXISTS idx_stg_units_uid ON {{this}} USING btree ("UID");',
             'CREATE INDEX IF NOT EXISTS idx_stg_units_code ON {{this}} USING btree ("CODE");',
             'CREATE INDEX IF NOT EXISTS idx_stg_units_type ON {{this}} USING btree ("TYPE");',
+            'CREATE INDEX IF NOT EXISTS idx_stg_units_type ON {{this}} USING btree ("UNIT_KEY");',
         ]
     )
 }}
@@ -17,6 +18,7 @@
 ) -%}
 select
     _id::text as "_ID",
+    {{ dbt_utils.generate_surrogate_key(["_id", "type"]) }} as "UNIT_KEY",
     -- _status::text as "_STATUS",
     state::text as "STATE",
     name::text as "NAME",

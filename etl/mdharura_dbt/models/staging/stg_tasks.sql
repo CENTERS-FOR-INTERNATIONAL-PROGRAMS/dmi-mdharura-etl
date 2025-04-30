@@ -13,7 +13,7 @@
 {%- set columns = dbt_utils.get_filtered_columns_in_relation(
     from=ref("intermediate_stg_tasks")
 ) -%}
-{%- set ebs_categories = ["cebs", "hebs", "vebs"] -%}
+{%- set ebs_categories = ["cebs", "hebs", "vebs", "lebs"] -%}
 -- VERIFICATION FORM FIELDS --
 {%- set verification_form_fields = [
     ["_id", "text"],
@@ -156,6 +156,100 @@
     ["updated_at", "timestamptz"],
 ] %}
 
+-- LEBS VERIFICATION FORM FIELDS --
+{%- set lebs_verification_form_fields = [
+    ["_id", "text"],
+    ["description", "text"],
+    ["is_matching_signal", "boolean"],
+    ["updated_signal", "text"],
+    ["date_health_threat_started", "timestamptz"],
+    ["informant", "text"],
+    ["other_informant", "text"],
+    ["additional_information", "text"],
+    ["date_verified", "timestamptz"],
+    ["is_still_happening", "boolean"],
+    ["is_reported_before", "boolean"],
+    ["date_scdsc_informed", "timestamptz"],
+    ["user", "text"],
+    ["via", "text"],
+    ["spot", "text"],
+    ["created_at", "timestamptz"],
+    ["updated_at", "timestamptz"],
+] %}
+
+-- LEBS INVESTIGATION FORM FIELDS --
+{%- set lebs_investigation_form_fields = [
+    ["_id", "text"],
+    ["date_scdsc_informed", "timestamptz"],
+    ["date_investigation_started", "timestamptz"],
+    ["date_event_started", "timestamptz"],
+    ["date_rrt_notified", "timestamptz"],
+    ["is_covid19_working_case_definition_met", "text"],
+    ["is_event_setting_promoting_spread", "text"],
+    ["measure_hand_hygene", "text"],
+    ["measure_temp_screening", "text"],
+    ["measure_physical_distancing", "text"],
+    ["measure_use_of_masks", "text"],
+    ["measure_ventilation", "text"],
+    ["additional_information", "text"],
+    ["risk_classification", "text"],
+    ["is_event_infectious", "text"],
+    ["event_categories", "text"],
+    ["systems_affected_by_event", "text"],
+    ["response_activities", "text"],
+    ["symptoms", "text"],
+    ["symptoms_other", "text"],
+    ["is_samples_collected", "text"],
+    ["lab_results", "text"],
+    ["measure_social_distancing", "text"],
+    ["user", "text"],
+    ["via", "text"],
+    ["spot", "text"],
+    ["created_at", "timestamptz"],
+    ["updated_at", "timestamptz"],
+] %}
+
+-- LEBS RESPONSE FORM FIELDS --
+{%- set lebs_response_form_fields = [
+    ["_id", "text"],
+    ["event_type", "text"],
+    ["date_scmoh_informed", "timestamptz"],
+    ["date_response_started", "timestamptz"],
+    ["date_samples_collected", "timestamptz"],
+    ["date_of_test_results", "timestamptz"],
+    ["is_covid19_working_case_definition_met", "text"],
+    ["is_cif_filled_and_samples_collected", "text"],
+    ["reasons_no_sample_collected_other", "text"],
+    ["response_activities_other", "text"],
+    ["is_humans_quaratined_followed_up", "text"],
+    ["event_status", "text"],
+    ["response_activities", "text"],
+    ["additional_response_activities", "text"],
+    ["reasons_no_sample_collected", "text"],
+    ["humans_quarantined_self", "text"],
+    ["humans_quarantined_school", "text"],
+    ["humans_quarantined_institutional", "text"],
+    ["humans_isolation_school", "text"],
+    ["humans_isolation_health_facility", "text"],
+    ["humans_isolation_home", "text"],
+    ["humans_isolation_institutional", "text"],
+    ["humans_dead", "integer"],
+    ["humans_positive", "integer"],
+    ["humans_tested", "integer"],
+    ["humans_cases", "integer"],
+    ["humans_quarantined", "integer"],
+    ["quarintine_types", "text"],
+    ["is_humans_isolated", "text"],
+    ["isolation_types", "text"],
+    ["event_statuses", "text"],
+    ["additional_information", "text"],
+    ["user", "text"],
+    ["via", "text"],
+    ["spot", "text"],
+    ["created_at", "timestamptz"],
+    ["updated_at", "timestamptz"],
+] %}
+
 select
     _id::text as "_ID",
     signal::text as "SIGNAL",
@@ -178,65 +272,98 @@ select
         as "{{uppercase_category}}_CREATEDAT",
         {{ column_exists(category ~ "__updated_at", columns, "timestamptz", "NULL") }}
         as "{{uppercase_category}}_UPDATEDAT",
-        {%- for vfield, vtype in verification_form_fields %}
-            {% set uppercase_vfield = vfield | upper | replace("_", "") -%}
-            {{
-                column_exists(
-                    category ~ "__verification_form__" ~ vfield,
-                    columns,
-                    vtype,
-                    "NULL",
-                )
-            }} as "{{uppercase_category}}_VERIFICATIONFORM_{{uppercase_vfield}}",
-        {%- endfor -%}
 
-        {% for ifield, itype in investigation_form_fields %}
-            {% set uppercase_ifield = ifield | upper | replace("_", "") -%}
-            {# Due to postgres having max size for column name, dlt adds a unique id for each long column #}
-            {%- if ifield == "is_new_cased_reported_from_initial_area" and category == "cebs" -%}
+        {% if category in ["lebs"] %}
+            {%- for lvfield, lvtype in lebs_verification_form_fields %}
+                {% set uppercase_lvfield = lvfield | upper | replace("_", "") -%}
                 {{
                     column_exists(
-                        category
-                        ~ "__investigation_form__"
-                        ~ "is_ybjriad_reported_from_initial_area",
+                        category ~ "__verification_form__" ~ lvfield,
                         columns,
-                        itype,
+                        lvtype,
                         "NULL",
                     )
-                }} as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
-            {%- elif ifield == "is_new_cased_reported_from_initial_area" and category == "hebs" -%}
+                }} as "{{uppercase_category}}_VERIFICATIONFORM_{{uppercase_lvfield}}",
+            {%- endfor -%}
+        {% else %}
+            {%- for vfield, vtype in verification_form_fields %}
+                {% set uppercase_vfield = vfield | upper | replace("_", "") -%}
                 {{
                     column_exists(
-                        category
-                        ~ "__investigation_form__"
-                        ~ "is_ss80mqd_reported_from_initial_area",
+                        category ~ "__verification_form__" ~ vfield,
                         columns,
-                        itype,
+                        vtype,
                         "NULL",
                     )
-                }} as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
-            {%- elif ifield == "is_new_cased_reported_from_initial_area" and category == "vebs" -%}
+                }} as "{{uppercase_category}}_VERIFICATIONFORM_{{uppercase_vfield}}",
+            {%- endfor -%}
+        {%- endif -%}
+
+        {% if category in ["lebs"] %}
+            {%- for lifield, litype in lebs_investigation_form_fields %}
+                {% set uppercase_lifield = lifield | upper | replace("_", "") -%}
                 {{
                     column_exists(
-                        category
-                        ~ "__investigation_form__"
-                        ~ "is_27a34wd_reported_from_initial_area",
+                        category ~ "__investigation_form__" ~ lifield,
                         columns,
-                        itype,
+                        litype,
                         "NULL",
                     )
-                }} as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
-            {%- else -%}
-                {{
-                    column_exists(
-                        category ~ "__investigation_form__" ~ ifield,
-                        columns,
-                        itype,
-                        "NULL",
-                    )
-                }} as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
-            {%- endif -%}
-        {%- endfor -%}
+                }} as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_lifield}}",
+            {%- endfor -%}
+        {%- else -%}
+            {% for ifield, itype in investigation_form_fields %}
+                {% set uppercase_ifield = ifield | upper | replace("_", "") -%}
+                {# Due to postgres having max size for column name, dlt adds a unique id for each long column #}
+                {%- if ifield == "is_new_cased_reported_from_initial_area" and category == "cebs" -%}
+                    {{
+                        column_exists(
+                            category
+                            ~ "__investigation_form__"
+                            ~ "is_ybjriad_reported_from_initial_area",
+                            columns,
+                            itype,
+                            "NULL",
+                        )
+                    }}
+                    as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
+                {%- elif ifield == "is_new_cased_reported_from_initial_area" and category == "hebs" -%}
+                    {{
+                        column_exists(
+                            category
+                            ~ "__investigation_form__"
+                            ~ "is_ss80mqd_reported_from_initial_area",
+                            columns,
+                            itype,
+                            "NULL",
+                        )
+                    }}
+                    as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
+                {%- elif ifield == "is_new_cased_reported_from_initial_area" and category == "vebs" -%}
+                    {{
+                        column_exists(
+                            category
+                            ~ "__investigation_form__"
+                            ~ "is_27a34wd_reported_from_initial_area",
+                            columns,
+                            itype,
+                            "NULL",
+                        )
+                    }}
+                    as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
+                {%- else -%}
+                    {{
+                        column_exists(
+                            category ~ "__investigation_form__" ~ ifield,
+                            columns,
+                            itype,
+                            "NULL",
+                        )
+                    }}
+                    as "{{uppercase_category}}_INVESTIGATIONFORM_{{uppercase_ifield}}",
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
 
         {% for rfield, rtype in response_form_fields %}
             {% set uppercase_rfield = rfield | upper | replace("_", "") -%}

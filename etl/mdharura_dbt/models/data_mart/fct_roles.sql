@@ -32,6 +32,7 @@ select
         community_unit."COMMUNITY_UNIT_KEY",
         health_facility."HEALTH_FACILITY_KEY",
         subcounty."SUB_COUNTY_KEY",
+        country."COUNTRY_KEY",
         'unset'
     ) as "UNIT_KEY",
     roles.*,
@@ -48,5 +49,6 @@ left join
 left join
     {{ ref("fct_health_facilities") }} as health_facility
     on health_facility."_ID" = roles."UNIT"
+left join {{ ref("fct_country_unit") }} as country on country."_ID" = roles."UNIT"
 left join
     {{ ref("fct_sub_county_units") }} as subcounty on subcounty."_ID" = roles."UNIT"

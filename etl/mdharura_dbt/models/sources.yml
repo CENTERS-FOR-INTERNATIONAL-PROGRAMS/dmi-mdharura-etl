@@ -47,6 +47,8 @@ sources:
         description: This table contains flattened entries for tasks response form recommendations
       - name: tasks__vebs__response_form__recommendations
         description: This table contains flattened entries for tasks response form recommendations
+      - name: tasks__v=lebs__response_form__recommendations
+        description: This table contains flattened entries for tasks response form recommendations
 
         # Response Activities
       - name: tasks__cebs__response_form__response_activities
@@ -55,6 +57,8 @@ sources:
         description: This table contains flattened entries for tasks response form response activities
       - name: tasks__vebs__response_form__response_activities
         description: This table contains flattened entries for tasks response form response activities
+      - name: tasks__lebs__response_form__response_activities
+        description: This table contains flattened entries for tasks response form response activities
 
         # Event Statuses
       - name: tasks__cebs__response_form__event_statuses
@@ -62,6 +66,8 @@ sources:
       - name: tasks__hebs__response_form__event_statuses
         description: This table contains flattened entries for tasks response form event statuses
       - name: tasks__vebs__response_form__event_statuses
+        description: This table contains flattened entries for tasks response form event statuses
+      - name: tasks__lebs__response_form__event_statuses
         description: This table contains flattened entries for tasks response form event statuses
 
   - name: staging

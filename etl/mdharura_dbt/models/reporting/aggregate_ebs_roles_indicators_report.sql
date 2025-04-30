@@ -278,10 +278,34 @@ select
     sub_county."NAME" as "SUB_COUNTY",
     sub_county."UID" as "SUB_COUNTY_UID",
     sub_county."_ID" as "SUB_COUNTY_ID",
-    coalesce(community_unit."NAME", health_facility."NAME", 'unset') as "UNIT_NAME",
-    coalesce(community_unit."TYPE", health_facility."TYPE", 'unset') as "UNIT_TYPE",
-    coalesce(community_unit."UID", health_facility."UID", 'unset') as "UNIT_UID",
-    coalesce(community_unit."_ID", health_facility."_ID", 'unset') as "UNIT_ID",
+    coalesce(
+        community_unit."NAME",
+        health_facility."NAME",
+        county."NAME",
+        country."NAME",
+        'unset'
+    ) as "UNIT_NAME",
+    coalesce(
+        community_unit."TYPE",
+        health_facility."TYPE",
+        county."TYPE",
+        country."TYPE",
+        'unset'
+    ) as "UNIT_TYPE",
+    coalesce(
+        community_unit."UID",
+        health_facility."UID",
+        county."UID",
+        country."UID",
+        'unset'
+    ) as "UNIT_UID",
+    coalesce(
+        community_unit."_ID",
+        health_facility."_ID",
+        county."_ID",
+        country."_ID",
+        'unset'
+    ) as "UNIT_ID",
 
     sum(roles."CHVS_REGISTERED") as "CHVS_REGISTERED",
     sum(roles."CHVS_REPORTING") as "CHVS_REPORTING",
@@ -343,6 +367,9 @@ left join
     on health_facility."HEALTH_FACILITY_KEY" = roles."UNIT_KEY"
     and health_facility."_ID" = roles."UNIT_ID"
 
+left join
+    {{ ref("fct_country_unit") }} as country on country."COUNTRY_KEY" = roles."UNIT_KEY"
+
 group by
     dim_date.date,
     dim_epi_week.week_number,
@@ -350,14 +377,20 @@ group by
     county."NAME",
     county."UID",
     county."_ID",
+    county."TYPE",
     sub_county."NAME",
     sub_county."UID",
     sub_county."_ID",
+    sub_county."TYPE",
     community_unit."NAME",
-    community_unit."TYPE",
     community_unit."UID",
     community_unit."_ID",
+    community_unit."TYPE",
     health_facility."NAME",
     health_facility."TYPE",
     health_facility."UID",
-    health_facility."_ID"
+    health_facility."_ID",
+    country."NAME",
+    country."TYPE",
+    country."UID",
+    country."_ID"

@@ -12,9 +12,11 @@
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_hebs_v_threat ON {{this}} USING btree ("HEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_cebs_v_threat ON {{this}} USING btree ("CEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_v_threat ON {{this}} USING btree ("VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_v_threat ON {{this}} USING btree ("LEBS_VERIFICATIONFORM_ISSTILLHAPPENING");',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_hebs_r_recommendations ON {{this}} USING gin ("HEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_cebs_r_recommendations ON {{this}} USING gin ("CEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_r_recommendations ON {{this}} USING gin ("VEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_r_recommendations ON {{this}} USING gin ("LEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
         ]
     )
 }}
@@ -25,18 +27,24 @@ select
     coalesce(
         community_unit."COUNTY_KEY",
         health_facility."COUNTY_KEY",
+        learning_institution."COUNTY_KEY",
+        veterinary_facility."COUNTY_KEY",
         subcounty."COUNTY_KEY",
         'unset'
     ) as "COUNTY_KEY",
     coalesce(
         community_unit."SUB_COUNTY_KEY",
         health_facility."SUB_COUNTY_KEY",
+        learning_institution."SUB_COUNTY_KEY",
+        veterinary_facility."SUB_COUNTY_KEY",
         subcounty."SUB_COUNTY_KEY",
         'unset'
     ) as "SUB_COUNTY_KEY",
     coalesce(
         community_unit."COMMUNITY_UNIT_KEY",
         health_facility."HEALTH_FACILITY_KEY",
+        learning_institution."LEARNING_INSTITUTION_KEY",
+        veterinary_facility."VETERINARY_FACILITY_KEY",
         subcounty."SUB_COUNTY_KEY",
         'unset'
     ) as "UNIT_KEY",
@@ -54,5 +62,11 @@ left join
 left join
     {{ ref("fct_health_facilities") }} as health_facility
     on health_facility."_ID" = tasks."UNIT_ID"
+left join
+    {{ ref("fct_veterinary_facilities") }} as veterinary_facility
+    on veterinary_facility."_ID" = tasks."UNIT_ID"
+left join
+    {{ ref("fct_learning_institutions") }} as learning_institution
+    on learning_institution."_ID" = tasks."UNIT_ID"
 left join
     {{ ref("fct_sub_county_units") }} as subcounty on subcounty."_ID" = tasks."UNIT_ID"

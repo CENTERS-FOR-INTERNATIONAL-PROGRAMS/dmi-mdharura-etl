@@ -1,4 +1,4 @@
-{%- set ebs_categories = ["cebs", "hebs", "vebs"] -%}
+{%- set ebs_categories = ["cebs", "hebs", "vebs", "lebs"] -%}
 {%- set task_nested_fields = ["units", "suggestions"] -%}
 {%- set investigation_form_fields = [
     "event_categories",

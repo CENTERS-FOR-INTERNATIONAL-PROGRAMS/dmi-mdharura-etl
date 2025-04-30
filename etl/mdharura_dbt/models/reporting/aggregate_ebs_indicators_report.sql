@@ -22,10 +22,46 @@ select
     sub_county."NAME" as "SUB_COUNTY",
     sub_county."UID" as "SUB_COUNTY_UID",
     sub_county."_ID" as "SUB_COUNTY_ID",
-    coalesce(community_unit."NAME", health_facility."NAME", 'unset') as "UNIT_NAME",
-    coalesce(community_unit."TYPE", health_facility."TYPE", 'unset') as "UNIT_TYPE",
-    coalesce(community_unit."UID", health_facility."UID", 'unset') as "UNIT_UID",
-    coalesce(community_unit."_ID", health_facility."_ID", 'unset') as "UNIT_ID",
+    coalesce(
+        community_unit."NAME",
+        health_facility."NAME",
+        veterinary_facility."NAME",
+        learning_institution."NAME",
+        sub_county."NAME",
+        county."NAME",
+        country."NAME",
+        'unset'
+    ) as "UNIT_NAME",
+    coalesce(
+        community_unit."TYPE",
+        health_facility."TYPE",
+        veterinary_facility."TYPE",
+        learning_institution."TYPE",
+        county."TYPE",
+        sub_county."TYPE",
+        country."TYPE",
+        'unset'
+    ) as "UNIT_TYPE",
+    coalesce(
+        community_unit."UID",
+        health_facility."UID",
+        veterinary_facility."UID",
+        learning_institution."UID",
+        sub_county."UID",
+        county."UID",
+        country."UID",
+        'unset'
+    ) as "UNIT_UID",
+    coalesce(
+        community_unit."_ID",
+        health_facility."_ID",
+        veterinary_facility."_ID",
+        learning_institution."_ID",
+        sub_county."_ID",
+        county."_ID",
+        country."_ID",
+        'unset'
+    ) as "UNIT_ID",
     sum(
         case
             when
@@ -61,7 +97,8 @@ select
             when
                 "CEBS_VERIFICATIONFORM_ID" is not null
                 or "HEBS_VERIFICATIONFORM_ID" is not null
-                or "VEBS_VERIFICATIONFORM_ID" is not null  -- OR "LEBS_VERIFICATIONFORM_ID" IS NOT NULL
+                or "VEBS_VERIFICATIONFORM_ID" is not null
+                or "LEBS_VERIFICATIONFORM_ID" is not null
             then 1
             else 0
         end
@@ -71,10 +108,8 @@ select
             when
                 "CEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" in ('Yes', 'yes')
                 or "HEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" in ('Yes', 'yes')
-                or "VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" in ('Yes', 'yes')  -- OR "LEBS_VERIFICATIONFORM_ISSTILLHAPPENING" IN (
-            -- 'Yes',
-            -- 'yes'
-            -- )
+                or "VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING" in ('Yes', 'yes')
+                or "LEBS_VERIFICATIONFORM_ISSTILLHAPPENING" in ('Yes', 'yes')
             then 1
             else 0
         end
@@ -85,7 +120,8 @@ select
             when
                 "CEBS_INVESTIGATIONFORM_ID" is not null
                 or "HEBS_INVESTIGATIONFORM_ID" is not null
-                or "VEBS_INVESTIGATIONFORM_ID" is not null  -- OR "LEBS_INVESTIGATIONFORM_ID" IS NOT NULL
+                or "VEBS_INVESTIGATIONFORM_ID" is not null
+                or "LEBS_INVESTIGATIONFORM_ID" is not null
             then 1
             else 0
         end
@@ -95,7 +131,8 @@ select
             when
                 "CEBS_RESPONSEFORM_ID" is not null
                 or "HEBS_RESPONSEFORM_ID" is not null
-                or "VEBS_RESPONSEFORM_ID" is not null  -- OR "LEBS_RESPONSEFORM_ID" IS NOT NULL
+                or "VEBS_RESPONSEFORM_ID" is not null
+                or "LEBS_RESPONSEFORM_ID" is not null
             then 1
             else 0
         end
@@ -109,6 +146,8 @@ select
                 and "HEBS_ESCALATIONFORM_ID" is null
                 or "VEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
                 and "VEBS_ESCALATIONFORM_ID" is null
+                or "LEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "LEBS_ESCALATIONFORM_ID" is null
             then 1
             else 0
         end
@@ -119,6 +158,7 @@ select
                 "CEBS_ESCALATIONFORM_ID" is not null
                 or "HEBS_ESCALATIONFORM_ID" is not null
                 or "VEBS_ESCALATIONFORM_ID" is not null
+                or "LEBS_ESCALATIONFORM_ID" is not null
             then 1
             else 0
         end
@@ -221,6 +261,43 @@ select
         case when "VEBS_ESCALATIONFORM_ID" is not null then 1 else 0 end
     ) as "VEBS_SIGNALS_ESCALATED",
 
+    -- LEBS Signals ---
+    sum(
+        case
+            when "SIGNAL" in ('l1', 'l2', 'l3', 'p1', 'p2', 'p3', 'm1', 'm2', 'm3')
+            then 1
+            else 0
+        end
+    ) as "LEBS_SIGNALS_REPORTED",
+    sum(
+        case when "LEBS_VERIFICATIONFORM_ID" is not null then 1 else 0 end
+    ) as "LEBS_SIGNALS_VERIFIED",
+    sum(
+        case
+            when "LEBS_VERIFICATIONFORM_ISSTILLHAPPENING" in ('Yes', 'yes')
+            then 1
+            else 0
+        end
+    ) as "LEBS_SIGNALS_VERIFIED_TRUE",
+    sum(
+        case when "LEBS_INVESTIGATIONFORM_ID" is not null then 1 else 0 end
+    ) as "LEBS_SIGNALS_RISK_ASSESSED",
+    sum(
+        case when "LEBS_RESPONSEFORM_ID" is not null then 1 else 0 end
+    ) as "LEBS_SIGNALS_RESPONDED",
+    sum(
+        case
+            when
+                "LEBS_RESPONSEFORM_RECOMMENDATIONS" like '%Escalate to higher level%'
+                and "LEBS_ESCALATIONFORM_ID" is null
+            then 1
+            else 0
+        end
+    ) as "LEBS_SIGNALS_TO_BE_ESCALATED",
+    sum(
+        case when "LEBS_ESCALATIONFORM_ID" is not null then 1 else 0 end
+    ) as "LEBS_SIGNALS_ESCALATED",
+
     sum(
         case when "VIA" in ('SMS', 'sms') then 1 else 0 end
     ) as "SIGNALS_REPORTED_VIA_SMS",
@@ -230,6 +307,7 @@ select
                 "CEBS_VERIFICATIONFORM_VIA" in ('SMS', 'sms')
                 or "HEBS_VERIFICATIONFORM_VIA" in ('SMS', 'sms')
                 or "VEBS_VERIFICATIONFORM_VIA" in ('SMS', 'sms')
+                or "LEBS_VERIFICATIONFORM_VIA" in ('SMS', 'sms')
             then 1
             else 0
         end
@@ -240,6 +318,7 @@ select
                 "CEBS_INVESTIGATIONFORM_VIA" in ('SMS', 'sms')
                 or "HEBS_INVESTIGATIONFORM_VIA" in ('SMS', 'sms')
                 or "VEBS_INVESTIGATIONFORM_VIA" in ('SMS', 'sms')
+                or "LEBS_INVESTIGATIONFORM_VIA" in ('SMS', 'sms')
             then 1
             else 0
         end
@@ -250,6 +329,7 @@ select
                 "CEBS_RESPONSEFORM_VIA" in ('SMS', 'sms')
                 or "HEBS_RESPONSEFORM_VIA" in ('SMS', 'sms')
                 or "VEBS_RESPONSEFORM_VIA" in ('SMS', 'sms')
+                or "LEBS_RESPONSEFORM_VIA" in ('SMS', 'sms')
             then 1
             else 0
         end
@@ -260,6 +340,7 @@ select
                 "CEBS_ESCALATIONFORM_VIA" in ('SMS', 'sms')
                 or "HEBS_ESCALATIONFORM_VIA" in ('SMS', 'sms')
                 or "VEBS_ESCALATIONFORM_VIA" in ('SMS', 'sms')
+                or "LEBS_ESCALATIONFORM_VIA" in ('SMS', 'sms')
             then 1
             else 0
         end
@@ -270,6 +351,7 @@ select
                 "CEBS_SUMMARYFORM_VIA" in ('SMS', 'sms')
                 or "HEBS_SUMMARYFORM_VIA" in ('SMS', 'sms')
                 or "VEBS_SUMMARYFORM_VIA" in ('SMS', 'sms')
+                or "LEBS_SUMMARYFORM_VIA" in ('SMS', 'sms')
             then 1
             else 0
         end
@@ -292,6 +374,19 @@ left join
     {{ ref("fct_health_facilities") }} as health_facility
     on health_facility."HEALTH_FACILITY_KEY" = tasks."UNIT_KEY"
     and health_facility."_ID" = tasks."UNIT_ID"
+
+left join
+    {{ ref("fct_learning_institutions") }} as learning_institution
+    on learning_institution."LEARNING_INSTITUTION_KEY" = tasks."UNIT_KEY"
+    and learning_institution."_ID" = tasks."UNIT_ID"
+
+left join
+    {{ ref("fct_veterinary_facilities") }} as veterinary_facility
+    on veterinary_facility."VETERINARY_FACILITY_KEY" = tasks."UNIT_KEY"
+    and veterinary_facility."_ID" = tasks."UNIT_ID"
+
+left join
+    {{ ref("fct_country_unit") }} as country on country."COUNTRY_KEY" = tasks."UNIT_KEY"
 where tasks."STATE" = 'live'
 group by
     dim_date.date,
@@ -300,9 +395,11 @@ group by
     county."NAME",
     county."UID",
     county."_ID",
+    county."TYPE",
     sub_county."NAME",
     sub_county."UID",
     sub_county."_ID",
+    sub_county."TYPE",
     community_unit."NAME",
     community_unit."UID",
     community_unit."_ID",
@@ -310,4 +407,16 @@ group by
     health_facility."NAME",
     health_facility."UID",
     health_facility."_ID",
-    health_facility."TYPE"
+    health_facility."TYPE",
+    learning_institution."NAME",
+    learning_institution."UID",
+    learning_institution."_ID",
+    learning_institution."TYPE",
+    veterinary_facility."NAME",
+    veterinary_facility."UID",
+    veterinary_facility."_ID",
+    veterinary_facility."TYPE",
+    country."NAME",
+    country."TYPE",
+    country."UID",
+    country."_ID"
