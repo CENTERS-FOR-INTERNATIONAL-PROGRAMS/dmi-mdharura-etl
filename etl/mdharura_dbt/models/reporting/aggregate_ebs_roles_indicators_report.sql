@@ -1,3 +1,19 @@
+{{
+    config(
+        post_hook=[
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_date ON {{this}} USING btree ("DATE");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_epiweek ON {{this}} USING btree ("EPI_WEEK");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_year ON {{this}} USING btree ("YEAR");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_county ON {{this}} USING btree ("COUNTY");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_subcounty ON {{this}} USING btree ("SUB_COUNTY");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_unit_name ON {{this}} USING btree ("UNIT_NAME");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_unit_id ON {{this}} USING btree ("UNIT_ID");',
+            'CREATE INDEX IF NOT EXISTS idx_rpt_agg_role_indicators_unit_type ON {{this}} USING btree ("UNIT_TYPE");',
+        ]
+    )
+}}
+
+
 with
     reporting_data as (
         select

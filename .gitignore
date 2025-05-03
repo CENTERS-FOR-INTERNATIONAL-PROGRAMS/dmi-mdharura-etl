@@ -4,6 +4,7 @@
 *.json
 *.db
 tmp*
+.tmp*
 __pycache__
 target/
 dbt_packages/
