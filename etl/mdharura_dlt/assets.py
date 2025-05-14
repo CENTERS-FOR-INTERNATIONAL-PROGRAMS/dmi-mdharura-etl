@@ -32,7 +32,7 @@ def dlt_asset_factory(collection_list):
         )
         def collections_asset(context: OpExecutionContext, pipeline: MdharuraDltResource):
             # Getting Data From MongoDB    
-            data = mongodb(URL, db, parallel=False).with_resources(*collection_name)
+            data = mongodb(URL, db, parallel=True).with_resources(*collection_name)
 
             if collection_name == "tasks":
                 data.resources[collection_name].apply_hints(columns={"units": {"data_type": "string"}})
