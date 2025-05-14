@@ -8,12 +8,10 @@ class DbtConfig(Config):
 
 DBT_PROJECT_DIR = file_relative_path(__file__, "./mdharura_dbt")
 
-# dbt_resource = DbtCliResource(project_dir=DBT_PROJECT_DIR)
+dbt_resource = DbtCliResource(project_dir=DBT_PROJECT_DIR)
+dbt_parse_invocation = dbt_resource.cli(["--quiet", "parse"], target_path=Path("target")).wait()
+dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")
 
-# dbt_parse_invocation = dbt_resource.cli(["--quiet", "parse"], target_path=Path("target"))
-# dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("manifest.json")
-
-dbt_manifest_path = Path(DBT_PROJECT_DIR).joinpath("target/manifest.json")
 
 @dbt_assets(manifest=dbt_manifest_path)
 def mdharura_dbt_assets(context: AssetExecutionContext, dbt: DbtCliResource):

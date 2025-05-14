@@ -46,8 +46,6 @@ RUN dbt deps
 
 WORKDIR /opt/dagster/app
 
-RUN dagster-dbt project prepare-and-package --file project.py
-
 # Run dagster gRPC server on port 6200
 EXPOSE 6200
 
