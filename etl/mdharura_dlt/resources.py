@@ -23,11 +23,11 @@ class MdharuraDltResource(ConfigurableResource):
         # use incremental loading. See: https://dlthub.com/docs/general-usage/incremental-loading
         # write_disposition={"disposition": "merge", "strategy": "delete-insert"},
         # columns={"updated_at": {"dedup_sort": "desc"}}
-        # write_disposition={"disposition": "merge", "strategy": "staging-optimized"},
+        # write_disposition={"disposition": "replace", "strategy": "staging-optimized"},
 
         load_info = pipeline.run(
           resource_data, 
-          write_disposition={"disposition": "merge", "strategy": "staging-optimized"},
+          write_disposition={"disposition": "replace", "strategy": "staging-optimized"},
           primary_key="_id",
           columns={"updated_at": {"dedup_sort": "desc"}}
         )
