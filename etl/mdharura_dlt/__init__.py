@@ -23,7 +23,7 @@ def mongodb(
     write_disposition: Optional[str] = dlt.config.value,
     parallel: Optional[bool] = dlt.config.value,
     limit: Optional[int] = None,
-    chunk_size: Optional[int] = 2000,
+    chunk_size: Optional[int] = 3000,
     filter_: Optional[Dict[str, Any]] = None,
 ) -> Iterable[DltResource]:
     """
@@ -67,7 +67,7 @@ def mongodb(
             primary_key="_id",
             write_disposition=write_disposition,
             spec=MongoDbCollectionConfiguration,
-            parallelized=parallel
+            parallelized=parallel,
         )(
             client,
             collection,

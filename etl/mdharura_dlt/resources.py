@@ -27,7 +27,7 @@ class MdharuraDltResource(ConfigurableResource):
 
         load_info = pipeline.run(
           resource_data, 
-          write_disposition={"disposition": "merge", "strategy": "upsert"},
+          write_disposition={"disposition": "merge", "strategy": "staging-optimized"},
           primary_key="_id",
           columns={"updated_at": {"dedup_sort": "desc"}}
         )
