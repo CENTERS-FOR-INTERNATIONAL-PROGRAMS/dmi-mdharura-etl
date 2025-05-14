@@ -49,6 +49,8 @@ services:
       - ./etl/project.py:/opt/dagster/app/project.py
       - ./etl/dagster.yaml:/opt/dagster/app/dagster.yaml
       - ./etl/workspace.yaml:/opt/dagster/app/workspace.yaml
+    limits:
+      memory: 500M
 
   # This service runs dagster-webserver, which loads your user code from the user code container.
   # Since our instance uses the QueuedRunCoordinator, any runs submitted from the webserver will be put on
@@ -98,6 +100,8 @@ services:
         condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    limits:
+      memory: 1000M
 
   # This service runs the dagster-daemon process, which is responsible for taking runs
   # off of the queue and launching them, as well as creating runs from schedules or sensors.
@@ -142,6 +146,8 @@ services:
         condition: service_started
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    limits:
+      memory: 500M
 
 networks:
   mdharura_etl_network:
