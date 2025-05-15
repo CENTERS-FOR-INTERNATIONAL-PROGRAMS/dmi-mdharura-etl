@@ -58,6 +58,10 @@ event_log_storage:
       port:
         env: DAGSTER_POSTGRES_PORT
 
+run_monitoring:
+  enabled: true
+  max_runtime_seconds: 1800
+
 # Configures how long Dagster waits for code locations
 # to load before timing out.
 code_servers:
