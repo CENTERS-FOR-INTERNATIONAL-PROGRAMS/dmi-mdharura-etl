@@ -1,14 +1,14 @@
 {{
     config(
         post_hook=[
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_county_key ON {{this}} USING btree ("COUNTY_KEY");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_scounty_key ON {{this}} USING btree ("SUB_COUNTY_KEY");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_key ON {{this}} USING btree ("VETERINARY_FACILITY_KEY");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_id ON {{this}} USING btree ("_ID");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_parent ON {{this}} USING btree ("PARENT");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_uid ON {{this}} USING btree ("UID");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_code ON {{this}} USING btree ("CODE");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_lf_type ON {{this}} USING btree ("TYPE");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_county_key ON {{this}} USING btree ("COUNTY_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_scounty_key ON {{this}} USING btree ("SUB_COUNTY_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_key ON {{this}} USING btree ("VETERINARY_FACILITY_KEY");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_id ON {{this}} USING btree ("_ID");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_parent ON {{this}} USING btree ("PARENT");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_uid ON {{this}} USING btree ("UID");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_code ON {{this}} USING btree ("CODE");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_vf_type ON {{this}} USING btree ("TYPE");',
         ]
     )
 }}
