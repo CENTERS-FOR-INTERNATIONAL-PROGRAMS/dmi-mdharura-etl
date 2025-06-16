@@ -1,5 +1,5 @@
-version: 6
-version_hash: zN2avUwW8U8EAiDiuvPsfu9jFpYKmC+BtupL/FRvUBA=
+version: 2
+version_hash: +Dbfjea50ex5QwzTHDDSn0yIvLPfmczIEcj6N55GC9M=
 engine_version: 11
 name: mongodb
 tables:
@@ -46,151 +46,6 @@ tables:
     write_disposition: skip
     resource: _dlt_loads
     description: Created by DLT. Tracks completed loads
-  roles:
-    columns:
-      _id:
-        nullable: false
-        primary_key: true
-        data_type: text
-      status:
-        data_type: text
-        nullable: true
-      _status:
-        data_type: text
-        nullable: true
-      user:
-        data_type: text
-        nullable: true
-      spot:
-        data_type: text
-        nullable: true
-      unit:
-        data_type: text
-        nullable: true
-      created_at:
-        data_type: timestamp
-        nullable: true
-      updated_at:
-        data_type: timestamp
-        nullable: true
-        dedup_sort: desc
-      v:
-        data_type: bigint
-        nullable: true
-      _dlt_load_id:
-        data_type: text
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      date_last_reported___id:
-        data_type: text
-        nullable: true
-      date_last_reported__test:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__updated_at:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__created_at:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__live:
-        data_type: timestamp
-        nullable: true
-      date_last_verified___id:
-        data_type: text
-        nullable: true
-      date_last_verified__test:
-        data_type: timestamp
-        nullable: true
-      date_last_verified__updated_at:
-        data_type: timestamp
-        nullable: true
-      date_last_verified__created_at:
-        data_type: timestamp
-        nullable: true
-      date_last_verified__live:
-        data_type: timestamp
-        nullable: true
-      _v:
-        data_type: bigint
-        nullable: true
-    write_disposition: merge
-    resource: roles
-    x-normalizer:
-      seen-data: true
-    x-merge-strategy: upsert
-  units:
-    columns:
-      _id:
-        nullable: false
-        primary_key: true
-        data_type: text
-      _status:
-        data_type: text
-        nullable: true
-      name:
-        data_type: text
-        nullable: true
-      type:
-        data_type: text
-        nullable: true
-      created_at:
-        data_type: timestamp
-        nullable: true
-      updated_at:
-        data_type: timestamp
-        nullable: true
-        dedup_sort: desc
-      v:
-        data_type: bigint
-        nullable: true
-      state:
-        data_type: text
-        nullable: true
-      _dlt_load_id:
-        data_type: text
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      code:
-        data_type: text
-        nullable: true
-      parent:
-        data_type: text
-        nullable: true
-      uid:
-        data_type: text
-        nullable: true
-      date_last_reported___id:
-        data_type: text
-        nullable: true
-      date_last_reported__test:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__updated_at:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__created_at:
-        data_type: timestamp
-        nullable: true
-      date_last_reported__live:
-        data_type: timestamp
-        nullable: true
-      _v:
-        data_type: bigint
-        nullable: true
-    write_disposition: merge
-    resource: units
-    x-normalizer:
-      seen-data: true
-    x-merge-strategy: upsert
   tasks:
     columns:
       _id:
@@ -218,7 +73,6 @@ tables:
       updated_at:
         data_type: timestamp
         nullable: true
-        dedup_sort: desc
       v:
         data_type: bigint
         nullable: true
@@ -485,10 +339,10 @@ tables:
       cebs__response_form__date_escalated:
         data_type: timestamp
         nullable: true
-      cebs__escalation_form__reason_other:
+      version:
         data_type: text
         nullable: true
-      version:
+      cebs__escalation_form__reason_other:
         data_type: text
         nullable: true
       cebs__response_form__other_response_activity:
@@ -971,6 +825,9 @@ tables:
       vebs__investigation_form__date_lab_results_received:
         data_type: timestamp
         nullable: true
+      cebs__investigation_form__is_event_infectious:
+        data_type: text
+        nullable: true
       vebs__investigation_form__cause:
         data_type: text
         nullable: true
@@ -1037,9 +894,6 @@ tables:
       hebs__escalation_form__reason_other:
         data_type: text
         nullable: true
-      cebs__investigation_form__is_event_infectious:
-        data_type: text
-        nullable: true
       hebs__summary_form__via:
         data_type: text
         nullable: true
@@ -1067,47 +921,148 @@ tables:
       hebs__summary_form__escalated_to:
         data_type: text
         nullable: true
-      pmebs__notify_form__via:
-        data_type: text
-        nullable: true
-      pmebs__notify_form___id:
-        data_type: text
-        nullable: true
-      pmebs__notify_form__user:
-        data_type: text
-        nullable: true
-      pmebs__notify_form__unit:
-        data_type: text
-        nullable: true
-      pmebs__notify_form__date_reported:
-        data_type: timestamp
-        nullable: true
-      pmebs__notify_form__date_requested:
-        data_type: timestamp
-        nullable: true
-      pmebs__notify_form__description:
-        data_type: text
-        nullable: true
-      pmebs__notify_form__locality:
-        data_type: text
-        nullable: true
-      pmebs__notify_form__updated_at:
-        data_type: timestamp
-        nullable: true
-      pmebs__notify_form__created_at:
-        data_type: timestamp
-        nullable: true
-      _v:
-        data_type: bigint
-        nullable: true
       hebs__verification_form__other_informant:
         data_type: text
         nullable: true
-    write_disposition: merge
+    write_disposition: replace
     resource: tasks
     x-normalizer:
       seen-data: true
-    x-merge-strategy: upsert
+  roles:
+    columns:
+      _id:
+        nullable: false
+        primary_key: true
+        data_type: text
+      status:
+        data_type: text
+        nullable: true
+      _status:
+        data_type: text
+        nullable: true
+      user:
+        data_type: text
+        nullable: true
+      spot:
+        data_type: text
+        nullable: true
+      unit:
+        data_type: text
+        nullable: true
+      created_at:
+        data_type: timestamp
+        nullable: true
+      updated_at:
+        data_type: timestamp
+        nullable: true
+      v:
+        data_type: bigint
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+      date_last_reported___id:
+        data_type: text
+        nullable: true
+      date_last_reported__test:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__live:
+        data_type: timestamp
+        nullable: true
+      date_last_verified___id:
+        data_type: text
+        nullable: true
+      date_last_verified__test:
+        data_type: timestamp
+        nullable: true
+      date_last_verified__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_verified__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_verified__live:
+        data_type: timestamp
+        nullable: true
+    write_disposition: replace
+    resource: roles
+    x-normalizer:
+      seen-data: true
+  units:
+    columns:
+      _id:
+        nullable: false
+        primary_key: true
+        data_type: text
+      _status:
+        data_type: text
+        nullable: true
+      name:
+        data_type: text
+        nullable: true
+      type:
+        data_type: text
+        nullable: true
+      created_at:
+        data_type: timestamp
+        nullable: true
+      updated_at:
+        data_type: timestamp
+        nullable: true
+      v:
+        data_type: bigint
+        nullable: true
+      state:
+        data_type: text
+        nullable: true
+      _dlt_load_id:
+        data_type: text
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+      code:
+        data_type: text
+        nullable: true
+      parent:
+        data_type: text
+        nullable: true
+      uid:
+        data_type: text
+        nullable: true
+      date_last_reported___id:
+        data_type: text
+        nullable: true
+      date_last_reported__test:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__updated_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__created_at:
+        data_type: timestamp
+        nullable: true
+      date_last_reported__live:
+        data_type: timestamp
+        nullable: true
+    write_disposition: replace
+    resource: units
+    x-normalizer:
+      seen-data: true
   _dlt_pipeline_state:
     columns:
       version:
@@ -1141,30 +1096,6 @@ tables:
     resource: _dlt_pipeline_state
     x-normalizer:
       seen-data: true
-  roles__units:
-    columns:
-      value:
-        data_type: text
-        nullable: true
-      _dlt_parent_id:
-        data_type: text
-        nullable: false
-        parent_key: true
-      _dlt_list_idx:
-        data_type: bigint
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
-    parent: roles
-    x-normalizer:
-      seen-data: true
   tasks__units:
     columns:
       value:
@@ -1182,10 +1113,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1206,10 +1133,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1230,10 +1153,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1254,10 +1173,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1278,10 +1193,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1302,10 +1213,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1326,10 +1233,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1350,10 +1253,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1374,10 +1273,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1398,10 +1293,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1422,106 +1313,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
-    parent: tasks
-    x-normalizer:
-      seen-data: true
-  tasks__hebs__investigation_form__event_categories:
-    columns:
-      value:
-        data_type: text
-        nullable: true
-      _dlt_parent_id:
-        data_type: text
-        nullable: false
-        parent_key: true
-      _dlt_list_idx:
-        data_type: bigint
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
-    parent: tasks
-    x-normalizer:
-      seen-data: true
-  tasks__hebs__investigation_form__systems_affected_by_event:
-    columns:
-      value:
-        data_type: text
-        nullable: true
-      _dlt_parent_id:
-        data_type: text
-        nullable: false
-        parent_key: true
-      _dlt_list_idx:
-        data_type: bigint
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
-    parent: tasks
-    x-normalizer:
-      seen-data: true
-  tasks__lebs__response_form__response_activities:
-    columns:
-      value:
-        data_type: text
-        nullable: true
-      _dlt_parent_id:
-        data_type: text
-        nullable: false
-        parent_key: true
-      _dlt_list_idx:
-        data_type: bigint
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
-    parent: tasks
-    x-normalizer:
-      seen-data: true
-  tasks__lebs__response_form__event_statuses:
-    columns:
-      value:
-        data_type: text
-        nullable: true
-      _dlt_parent_id:
-        data_type: text
-        nullable: false
-        parent_key: true
-      _dlt_list_idx:
-        data_type: bigint
-        nullable: false
-      _dlt_id:
-        data_type: text
-        nullable: false
-        unique: true
-        row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1542,10 +1333,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: tasks
     x-normalizer:
       seen-data: true
@@ -1566,11 +1353,107 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__investigation_form__event_categories:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_parent_id:
         data_type: text
         nullable: false
-        root_key: true
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
     parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__hebs__investigation_form__systems_affected_by_event:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__lebs__response_form__response_activities:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  tasks__lebs__response_form__event_statuses:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: tasks
+    x-normalizer:
+      seen-data: true
+  roles__units:
+    columns:
+      value:
+        data_type: text
+        nullable: true
+      _dlt_parent_id:
+        data_type: text
+        nullable: false
+        parent_key: true
+      _dlt_list_idx:
+        data_type: bigint
+        nullable: false
+      _dlt_id:
+        data_type: text
+        nullable: false
+        unique: true
+        row_key: true
+    parent: roles
     x-normalizer:
       seen-data: true
   units__suggestions:
@@ -1590,10 +1473,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: units
     x-normalizer:
       seen-data: true
@@ -1614,10 +1493,6 @@ tables:
         nullable: false
         unique: true
         row_key: true
-      _dlt_root_id:
-        data_type: text
-        nullable: false
-        root_key: true
     parent: units
     x-normalizer:
       seen-data: true
@@ -1643,20 +1518,6 @@ normalizers:
   names: snake_case
   json:
     module: dlt.common.normalizers.json.relational
-    config:
-      propagation:
-        tables:
-          tasks:
-            _dlt_id: _dlt_root_id
-          roles:
-            _dlt_id: _dlt_root_id
-          units:
-            _dlt_id: _dlt_root_id
-  use_break_path_on_normalize: false
 previous_hashes:
-- 4FDB9x0fUy6rU/l1NANGAJPQNBXJgdsnDFSn5fCOxvI=
-- VnOdTfm4Cl5gZQFYl4U7atbVfsRcPytbKffW8zBndCw=
-- o9gH2GkRFR4lyvF0uY4AbtsiiYb7pRhi0FZwPeKqK9A=
-- xS+q02wCAa32QsY2hxS7eKhNLO9aFKJvKk8YwGKqcYI=
-- nbeJgRvx5Vn5UUyIiLgiBhK9EQBjeOVLixPHraGxs1I=
-- j7kMBr9xx3Z0WLu4Nl8aGfcZdmq+JOEE+hcLoarCK2A=
+- S0vl/Y1CDDz2p5h4yANAfwLspDnNwLl5WK1alsVM5CE=
+- 9smvfxsVVjJvkeOD5fHujl5ZQ12diDK+LWKga7V93Gw=

@@ -24,12 +24,14 @@ class MdharuraDltResource(ConfigurableResource):
         # write_disposition={"disposition": "merge", "strategy": "delete-insert"},
         # columns={"updated_at": {"dedup_sort": "desc"}}
         # write_disposition={"disposition": "replace", "strategy": "staging-optimized"},
+        # write_disposition={"disposition": "replace"},
 
         load_info = pipeline.run(
           resource_data, 
-          write_disposition={"disposition": "merge"},
+          # write_disposition={"disposition": "merge", "strategy": "upsert"},
+          write_disposition={"disposition": "replace", "strategy": "staging-optimized"},
           primary_key="_id",
-          columns={"updated_at": {"dedup_sort": "desc"}}
+          # columns={"updated_at": {"dedup_sort": "desc"}}
         )
 
         return load_info

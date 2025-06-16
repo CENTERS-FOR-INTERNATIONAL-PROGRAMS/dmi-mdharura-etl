@@ -68,6 +68,7 @@ def mongodb(
             write_disposition=write_disposition,
             spec=MongoDbCollectionConfiguration,
             parallelized=parallel,
+            incremental=incremental, 
         )(
             client,
             collection,
