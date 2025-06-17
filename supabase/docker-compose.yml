@@ -9,15 +9,15 @@ name: supabase
 services:
   studio:
     container_name: supabase-studio
-    image: supabase/studio:2025.04.21-sha-173cc56
+    image: supabase/studio:2025.06.02-sha-8f2993d
     restart: unless-stopped
     healthcheck:
-      test:
-        [
+      test: [
           "CMD",
           "node",
           "-e",
-          "require('http').get('http://localhost:3000/api/profile', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})",
+          "fetch('http://studio:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})",
+          # "require('http').get('http://localhost:3000/api/profile', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})",
         ]
       timeout: 10s
       interval: 5s
@@ -71,7 +71,7 @@ services:
 
   auth:
     container_name: supabase-auth
-    image: supabase/gotrue:v2.171.0
+    image: supabase/gotrue:v2.174.0
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
@@ -152,7 +152,7 @@ services:
 
   rest:
     container_name: supabase-rest
-    image: postgrest/postgrest:v12.2.11
+    image: postgrest/postgrest:v12.2.12
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
@@ -209,6 +209,201 @@ services:
       RLIMIT_NOFILE: "10000"
       APP_NAME: realtime
       SEED_SELF_HOST: true
+
+  meta:
+    container_name: supabase-meta
+    image: supabase/postgres-meta:v0.89.3
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: ${POSTGRES_HOST}
+      PG_META_DB_PORT: ${POSTGRES_PORT}
+      PG_META_DB_NAME: ${POSTGRES_DB}
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+  functions:
+    container_name: supabase-edge-functions
+    image: supabase/edge-runtime:v1.67.4
+    restart: unless-stopped
+    # depends_on:
+    #   analytics:
+    #     condition: service_healthy
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      # TODO: Allow configuring VERIFY_JWT per function. This PR might help: https://github.com/supabase/cli/pull/786
+      VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
+    volumes:
+      - ./volumes/functions:/home/deno/functions:Z
+    command:
+      - start
+      - --main-service
+      - /home/deno/functions/main
+
+  # Comment out everything below this point if you are using an external Postgres database
+  db:
+    container_name: supabase-db
+    image: supabase/postgres:15.8.1.060
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # depends_on:
+    #   vector:
+    #     condition: service_healthy
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/postgresql.conf
+      - -c
+      - log_min_messages=fatal # prevents Realtime polling queries from appearing in logs
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: ${POSTGRES_PORT}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXP: ${JWT_EXPIRY}
+    ports:
+      - ${POSTGRES_BIND_PORT}:${POSTGRES_PORT}
+    volumes:
+      - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
+      # Must be superuser to create event trigger
+      - ./volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
+      # Must be superuser to alter reserved role
+      - ./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
+      # Initialize the database settings with JWT_SECRET and JWT_EXP
+      - ./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
+      # PGDATA directory is persisted between restarts
+      - ${SUPABASE_DB_VOLUME}:/var/lib/postgresql/data:Z
+      # Changes required for internal supabase data such as _analytics
+      - ./volumes/db/_supabase.sql:/docker-entrypoint-initdb.d/migrations/97-_supabase.sql:Z
+      # Changes required for Analytics support
+      - ./volumes/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
+      # Changes required for Pooler support
+      - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
+      # Use named volume to persist pgsodium decryption key between restarts
+      - db-config:/etc/postgresql-custom
+
+  # vector:
+  #   container_name: supabase-vector
+  #   image: timberio/vector:0.28.1-alpine
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD",
+  #         "wget",
+  #         "--no-verbose",
+  #         "--tries=1",
+  #         "--spider",
+  #         "http://vector:9001/health",
+  #       ]
+  #     timeout: 5s
+  #     interval: 5s
+  #     retries: 3
+  #   volumes:
+  #     - ./volumes/vector/vector.yml:/etc/vector/vector.yml:ro
+  #     - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro
+  #   environment:
+  #     LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
+  #   command: ["--config", "etc/vector/vector.yml"]
+
+  # Update the DATABASE_URL if you are using an external Postgres database
+  # supavisor:
+  #   container_name: supabase-pooler
+  #   image: supabase/supavisor:1.1.62
+  #   healthcheck:
+  #     test: curl -sSfL --head -o /dev/null "http://127.0.0.1:4000/api/health"
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     analytics:
+  #       condition: service_healthy
+  #   command:
+  #     - /bin/sh
+  #     - -c
+  #     - /app/bin/migrate && /app/bin/supavisor eval "$$(cat /etc/pooler/pooler.exs)" && /app/bin/server
+  #   restart: unless-stopped
+  #   ports:
+  #     - ${POSTGRES_PORT}:5432
+  #     - ${POOLER_PROXY_PORT_TRANSACTION}:6543
+  #   environment:
+  #     - PORT=4000
+  #     - POSTGRES_PORT=${POSTGRES_PORT}
+  #     - POSTGRES_DB=${POSTGRES_DB}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #     - DATABASE_URL=ecto://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/_supabase
+  #     - CLUSTER_POSTGRES=true
+  #     - SECRET_KEY_BASE=${SUPAVISOR_SECRET_KEY_BASE}
+  #     - VAULT_ENC_KEY=${SUPAVISOR_VAULT_ENC_KEY}
+  #     - API_JWT_SECRET=${JWT_SECRET}
+  #     - METRICS_JWT_SECRET=${JWT_SECRET}
+  #     - REGION=local
+  #     - ERL_AFLAGS=-proto_dist inet_tcp
+  #     - POOLER_TENANT_ID=${POOLER_TENANT_ID}
+  #     - POOLER_DEFAULT_POOL_SIZE=${POOLER_DEFAULT_POOL_SIZE}
+  #     - POOLER_MAX_CLIENT_CONN=${POOLER_MAX_CLIENT_CONN}
+  #     - POOLER_POOL_MODE=transaction
+  #   volumes:
+  #     - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro
+
+  # analytics:
+  #   container_name: supabase-analytics
+  #   image: supabase/logflare:1.4.0
+  #   healthcheck:
+  #     test: ["CMD", "curl", "http://localhost:4000/health"]
+  #     timeout: 5s
+  #     interval: 5s
+  #     retries: 10
+  #   restart: unless-stopped
+  #   depends_on:
+  #     db:
+  #       # Disable this if you are using an external Postgres database
+  #       condition: service_healthy
+  #   # Uncomment to use Big Query backend for analytics
+  #   # volumes:
+  #   #   - type: bind
+  #   #     source: ${PWD}/gcloud.json
+  #   #     target: /opt/app/rel/logflare/bin/gcloud.json
+  #   #     read_only: true
+  #   environment:
+  #     LOGFLARE_NODE_HOST: 127.0.0.1
+  #     DB_USERNAME: supabase_admin
+  #     DB_DATABASE: _supabase
+  #     DB_HOSTNAME: ${POSTGRES_HOST}
+  #     DB_PORT: ${POSTGRES_PORT}
+  #     DB_PASSWORD: ${POSTGRES_PASSWORD}
+  #     DB_SCHEMA: _analytics
+  #     LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
+  #     LOGFLARE_SINGLE_TENANT: true
+  #     LOGFLARE_SUPABASE_MODE: true
+  #     LOGFLARE_MIN_CLUSTER_SIZE: 1
+
+  #     # Comment variables to use Big Query backend for analytics
+  #     POSTGRES_BACKEND_URL: postgresql://supabase_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/_supabase
+  #     POSTGRES_BACKEND_SCHEMA: _analytics
+  #     LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
+  #     # Uncomment to use Big Query backend for analytics
+  #     # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
+  #     # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
+  #   ports:
+  #     - 4000:4000
 
   # # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   # storage:
@@ -269,201 +464,6 @@ services:
   #     IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
   #   volumes:
   #     - ./volumes/storage:/var/lib/storage:z
-
-  meta:
-    container_name: supabase-meta
-    image: supabase/postgres-meta:v0.88.9
-    depends_on:
-      db:
-        # Disable this if you are using an external Postgres database
-        condition: service_healthy
-    restart: unless-stopped
-    environment:
-      PG_META_PORT: 8080
-      PG_META_DB_HOST: ${POSTGRES_HOST}
-      PG_META_DB_PORT: ${POSTGRES_PORT}
-      PG_META_DB_NAME: ${POSTGRES_DB}
-      PG_META_DB_USER: supabase_admin
-      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
-
-  functions:
-    container_name: supabase-edge-functions
-    image: supabase/edge-runtime:v1.67.4
-    restart: unless-stopped
-    # depends_on:
-    #   analytics:
-    #     condition: service_healthy
-    environment:
-      JWT_SECRET: ${JWT_SECRET}
-      SUPABASE_URL: http://kong:8000
-      SUPABASE_ANON_KEY: ${ANON_KEY}
-      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-      SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-      # TODO: Allow configuring VERIFY_JWT per function. This PR might help: https://github.com/supabase/cli/pull/786
-      VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
-    volumes:
-      - ./volumes/functions:/home/deno/functions:Z
-    command:
-      - start
-      - --main-service
-      - /home/deno/functions/main
-
-  # analytics:
-  #   container_name: supabase-analytics
-  #   image: supabase/logflare:1.4.0
-  #   healthcheck:
-  #     test: ["CMD", "curl", "http://localhost:4000/health"]
-  #     timeout: 5s
-  #     interval: 5s
-  #     retries: 10
-  #   restart: unless-stopped
-  #   depends_on:
-  #     db:
-  #       # Disable this if you are using an external Postgres database
-  #       condition: service_healthy
-  #   # Uncomment to use Big Query backend for analytics
-  #   # volumes:
-  #   #   - type: bind
-  #   #     source: ${PWD}/gcloud.json
-  #   #     target: /opt/app/rel/logflare/bin/gcloud.json
-  #   #     read_only: true
-  #   environment:
-  #     LOGFLARE_NODE_HOST: 127.0.0.1
-  #     DB_USERNAME: supabase_admin
-  #     DB_DATABASE: _supabase
-  #     DB_HOSTNAME: ${POSTGRES_HOST}
-  #     DB_PORT: ${POSTGRES_PORT}
-  #     DB_PASSWORD: ${POSTGRES_PASSWORD}
-  #     DB_SCHEMA: _analytics
-  #     LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
-  #     LOGFLARE_SINGLE_TENANT: true
-  #     LOGFLARE_SUPABASE_MODE: true
-  #     LOGFLARE_MIN_CLUSTER_SIZE: 1
-
-  #     # Comment variables to use Big Query backend for analytics
-  #     POSTGRES_BACKEND_URL: postgresql://supabase_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/_supabase
-  #     POSTGRES_BACKEND_SCHEMA: _analytics
-  #     LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
-  #     # Uncomment to use Big Query backend for analytics
-  #     # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
-  #     # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
-  #   ports:
-  #     - 4000:4000
-
-  # Comment out everything below this point if you are using an external Postgres database
-  db:
-    container_name: supabase-db
-    image: supabase/postgres:15.8.1.060
-    healthcheck:
-      test: pg_isready -U postgres -h localhost
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    # depends_on:
-    #   vector:
-    #     condition: service_healthy
-    command:
-      - postgres
-      - -c
-      - config_file=/etc/postgresql/postgresql.conf
-      - -c
-      - log_min_messages=fatal # prevents Realtime polling queries from appearing in logs
-    restart: unless-stopped
-    environment:
-      POSTGRES_HOST: /var/run/postgresql
-      PGPORT: ${POSTGRES_PORT}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      PGPASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATABASE: ${POSTGRES_DB}
-      POSTGRES_DB: ${POSTGRES_DB}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXP: ${JWT_EXPIRY}
-    ports:
-      - ${POSTGRES_BIND_PORT}:${POSTGRES_PORT}
-    volumes:
-      - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
-      # Must be superuser to create event trigger
-      - ./volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
-      # Must be superuser to alter reserved role
-      - ./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
-      # Initialize the database settings with JWT_SECRET and JWT_EXP
-      - ./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
-      # PGDATA directory is persisted between restarts
-      - ${SUPABASE_DB_VOLUME}:/var/lib/postgresql/data:Z
-      # Changes required for internal supabase data such as _analytics
-      - ./volumes/db/_supabase.sql:/docker-entrypoint-initdb.d/migrations/97-_supabase.sql:Z
-      # Changes required for Analytics support
-      - ./volumes/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
-      # Changes required for Pooler support
-      - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
-      # Use named volume to persist pgsodium decryption key between restarts
-      - db-config:/etc/postgresql-custom
-
-  vector:
-    container_name: supabase-vector
-    image: timberio/vector:0.28.1-alpine
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://vector:9001/health",
-        ]
-      timeout: 5s
-      interval: 5s
-      retries: 3
-    volumes:
-      - ./volumes/vector/vector.yml:/etc/vector/vector.yml:ro
-      - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro
-    environment:
-      LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
-    command: ["--config", "etc/vector/vector.yml"]
-
-  # Update the DATABASE_URL if you are using an external Postgres database
-  # supavisor:
-  #   container_name: supabase-pooler
-  #   image: supabase/supavisor:1.1.62
-  #   healthcheck:
-  #     test: curl -sSfL --head -o /dev/null "http://127.0.0.1:4000/api/health"
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     analytics:
-  #       condition: service_healthy
-  #   command:
-  #     - /bin/sh
-  #     - -c
-  #     - /app/bin/migrate && /app/bin/supavisor eval "$$(cat /etc/pooler/pooler.exs)" && /app/bin/server
-  #   restart: unless-stopped
-  #   ports:
-  #     - ${POSTGRES_PORT}:5432
-  #     - ${POOLER_PROXY_PORT_TRANSACTION}:6543
-  #   environment:
-  #     - PORT=4000
-  #     - POSTGRES_PORT=${POSTGRES_PORT}
-  #     - POSTGRES_DB=${POSTGRES_DB}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - DATABASE_URL=ecto://postgres:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/_supabase
-  #     - CLUSTER_POSTGRES=true
-  #     - SECRET_KEY_BASE=${SUPAVISOR_SECRET_KEY_BASE}
-  #     - VAULT_ENC_KEY=${SUPAVISOR_VAULT_ENC_KEY}
-  #     - API_JWT_SECRET=${JWT_SECRET}
-  #     - METRICS_JWT_SECRET=${JWT_SECRET}
-  #     - REGION=local
-  #     - ERL_AFLAGS=-proto_dist inet_tcp
-  #     - POOLER_TENANT_ID=${POOLER_TENANT_ID}
-  #     - POOLER_DEFAULT_POOL_SIZE=${POOLER_DEFAULT_POOL_SIZE}
-  #     - POOLER_MAX_CLIENT_CONN=${POOLER_MAX_CLIENT_CONN}
-  #     - POOLER_POOL_MODE=transaction
-  #   volumes:
-  #     - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro
 
 volumes:
   db-config:

@@ -1,5 +1,5 @@
-version: 2
-version_hash: +Dbfjea50ex5QwzTHDDSn0yIvLPfmczIEcj6N55GC9M=
+version: 3
+version_hash: uwmQyiR5Zuz7Xy6C5uE+TVJ6qrFqbDCI/XAA7tPFW/Y=
 engine_version: 11
 name: mongodb
 tables:
@@ -996,6 +996,9 @@ tables:
       date_last_verified__live:
         data_type: timestamp
         nullable: true
+      cadre:
+        data_type: text
+        nullable: true
     write_disposition: replace
     resource: roles
     x-normalizer:
@@ -1519,5 +1522,6 @@ normalizers:
   json:
     module: dlt.common.normalizers.json.relational
 previous_hashes:
+- +Dbfjea50ex5QwzTHDDSn0yIvLPfmczIEcj6N55GC9M=
 - S0vl/Y1CDDz2p5h4yANAfwLspDnNwLl5WK1alsVM5CE=
 - 9smvfxsVVjJvkeOD5fHujl5ZQ12diDK+LWKga7V93Gw=
