@@ -104,11 +104,13 @@ select
     dim_epi_week.week_number as "EPI_WEEK",
     dim_epi_week.year as "YEAR",
     county."NAME" as "COUNTY",
-    county."UID" as "COUNTY_UID",
     county."_ID" as "COUNTY_ID",
+    county."UID" as "COUNTY_UID",
+    county."CODE" as "COUNTY_CODE",
     sub_county."NAME" as "SUB_COUNTY",
-    sub_county."UID" as "SUB_COUNTY_UID",
     sub_county."_ID" as "SUB_COUNTY_ID",
+    sub_county."UID" as "SUB_COUNTY_UID",
+    sub_county."CODE" as "SUB_COUNTY_CODE",
     coalesce(
         community_unit."NAME",
         health_facility."NAME",
@@ -130,6 +132,13 @@ select
         country."UID",
         'unset'
     ) as "UNIT_UID",
+    coalesce(
+        community_unit."CODE",
+        health_facility."CODE",
+        county."CODE",
+        country."CODE",
+        'unset'
+    ) as "UNIT_CODE",
     coalesce(
         community_unit."_ID",
         health_facility."_ID",

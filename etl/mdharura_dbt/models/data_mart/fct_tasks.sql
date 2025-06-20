@@ -12,11 +12,11 @@
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_hebs_v_threat ON {{this}} USING btree ("HEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_cebs_v_threat ON {{this}} USING btree ("CEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_v_threat ON {{this}} USING btree ("VEBS_VERIFICATIONFORM_ISTHREATSTILLEXISTING");',
-            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_v_threat ON {{this}} USING btree ("LEBS_VERIFICATIONFORM_ISSTILLHAPPENING");',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_lebs_v_threat ON {{this}} USING btree ("LEBS_VERIFICATIONFORM_ISSTILLHAPPENING");',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_hebs_r_recommendations ON {{this}} USING gin ("HEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_cebs_r_recommendations ON {{this}} USING gin ("CEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
             'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_r_recommendations ON {{this}} USING gin ("VEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
-            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_vebs_r_recommendations ON {{this}} USING gin ("LEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
+            'CREATE INDEX IF NOT EXISTS idx_fct_tasks_lebs_r_recommendations ON {{this}} USING gin ("LEBS_RESPONSEFORM_RECOMMENDATIONS" gin_trgm_ops);',
         ]
     )
 }}
